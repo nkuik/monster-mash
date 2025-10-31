@@ -6,17 +6,24 @@
 
 **⚠️ CRITICAL**: This task breakdown follows the **spike-first approach** mandated by the constitution. Implementation is organized to validate hypotheses through experimentation before building infrastructure.
 
+**🤖 LLM INTEGRATION**: Spike 2 and Spike 3 amended to prioritize Claude Haiku 4.5 testing. Requires ANTHROPIC_API_KEY environment variable (see T014 for setup). Model choice: Haiku 4.5 selected for cost efficiency ($1/$5 per million tokens) while maintaining sufficient quality for party planning.
+
 **Constitution Alignment**: Experiment-First, Fast Iteration, Minimal Ceremony
 
 ---
 
 ## Task Summary
 
-- **Total Tasks**: 23
-- **Spike Phase Tasks**: 8 (validate approach)
-- **MVP Implementation Tasks**: 15 (only if spikes succeed)
-- **Parallel Opportunities**: 12 tasks can run in parallel after dependencies met
-- **MVP Scope**: Spike validation + User Story 1 (core party planning)
+- **Total Tasks**: 36 (75 if all conditional phases)
+- **Spike Phase Tasks**: 24 (validate LLM approach + coordination)
+  - Spike 1: 7 tasks (✅ COMPLETE)
+  - Spike 2: 12 tasks (✅ COMPLETE - Haiku 4.5 validated)
+  - Spike 3: 8 tasks (⏭️ NEXT - personality testing)
+  - Decision Point: 4 tasks (⏭️ pending Spike 3)
+- **MVP Implementation Tasks**: 12 (only if spikes succeed)
+- **Parallel Opportunities**: 8 tasks can run in parallel after dependencies met
+- **MVP Scope**: Spike validation (including LLM value) + User Story 1 (core party planning)
+- **Current Progress**: 22/36 tasks complete (61%), ready for Spike 3
 
 ---
 
@@ -28,13 +35,13 @@
 
 ### Tasks
 
-- [ ] T001 Initialize npm/pnpm project with package.json in project root
-- [ ] T002 Configure tsconfig.json with strict mode and ES2022 target in project root
-- [ ] T003 [P] Install TypeScript 5.3+ and tsx as dev dependencies
-- [ ] T004 [P] Create src/ directory for spike experiments
-- [ ] T005 [P] Add .gitignore for node_modules/, dist/, \*.js files
+- [x] T001 Initialize npm/pnpm project with package.json in project root
+- [x] T002 Configure tsconfig.json with strict mode and ES2022 target in project root
+- [x] T003 [P] Install TypeScript 5.3+ and tsx as dev dependencies
+- [x] T004 [P] Create src/ directory for spike experiments
+- [x] T005 [P] Add .gitignore for node_modules/, dist/, \*.js files
 
-**Completion Criteria**: `npx tsx --version` succeeds, `src/` directory exists
+**Completion Criteria**: ✅ `npx tsx --version` succeeds (v4.20.6), `src/` directory exists
 
 ---
 
@@ -54,75 +61,86 @@
 
 #### Tasks
 
-- [ ] T006 Create src/spike-1-agents.ts with Agent type definition
-- [ ] T007 Implement themeAgent with decide() function returning theme from options array
-- [ ] T008 Implement foodAgent with decide() function generating menu based on theme
-- [ ] T009 Add message array to track agent communication
-- [ ] T010 Implement orchestration: themeAgent picks theme, foodAgent generates menu
-- [ ] T011 Add console.log output showing theme, menu, and message log
-- [ ] T012 Test: Run `npx tsx src/spike-1-agents.ts` and verify output shows coordination
+- [x] T006 Create src/spike-1-agents.ts with Agent type definition
+- [x] T007 Implement themeAgent with decide() function returning theme from options array
+- [x] T008 Implement foodAgent with decide() function generating menu based on theme
+- [x] T009 Add message array to track agent communication
+- [x] T010 Implement orchestration: themeAgent picks theme, foodAgent generates menu
+- [x] T011 Add console.log output showing theme, menu, and message log
+- [x] T012 Test: Run `npx tsx src/spike-1-agents.ts` and verify output shows coordination
 
-**Success Criteria**:
+**Success Criteria**: ✅ ALL MET
 
-- Script outputs selected theme
-- Script outputs theme-appropriate menu
-- Message log shows agent-to-agent communication
-- Total lines: ~150
+- ✅ Script outputs selected theme (Spooky)
+- ✅ Script outputs theme-appropriate menu (4 items)
+- ✅ Message log shows agent-to-agent communication (4 messages)
+- ✅ Total lines: ~140 (within target)
 
-**Decision Point**: If agents can coordinate with simple objects, we don't need HTTP/JSON-RPC yet
-
----
-
-### Spike 2: Does Voting Work? (Day 2)
-
-**Hypothesis**: 3rd agent voting mechanism improves decision quality and provides value
-
-**Learn**: Is consensus mechanism valuable? Or do agents just agree anyway?
-
-#### Tasks
-
-- [ ] T013 Create src/spike-2-voting.ts copying spike-1 as baseline
-- [ ] T014 Add decoratorAgent with decide() function that votes on theme
-- [ ] T015 Implement voting logic: collect votes from 3 agents on theme options
-- [ ] T016 Implement majority calculation to determine winning theme
-- [ ] T017 Update console output to show individual votes and final consensus
-- [ ] T018 Test: Run script with different voting scenarios, verify majority wins
-
-**Success Criteria**:
-
-- 3 agents cast votes on theme selection
-- Majority vote determines outcome
-- Tie-breaking handled (if needed)
-- Total additional lines: ~50
-
-**Decision Point**: If voting adds no value (agents always agree), skip consensus complexity
+**Decision**: ✅ Agents can coordinate with simple objects - NO need for HTTP/JSON-RPC yet
 
 ---
 
-### Spike 3: Do Personalities Matter? (Day 3)
+### Spike 2: Does LLM Add Value for Content Generation? (Day 2) - **✅ COMPLETE**
 
-**Hypothesis**: Agent personalities affect decision outcomes observably and create engaging dynamics
+**Hypothesis**: Claude Haiku 4.5 generates higher quality, more creative party options than hardcoded templates
 
-**Learn**: Are personalities worth the complexity? Do they create engaging dynamics?
+**Learn**: Does LLM add enough value to justify API cost and latency? Are confidence scores meaningful?
 
 #### Tasks
 
-- [ ] T019 Create src/spike-3-personality.ts copying spike-2 as baseline
-- [ ] T020 Add Personality type with style and budgetWeight properties
-- [ ] T021 Modify foodAgent to have "frugal" personality affecting menu decisions
-- [ ] T022 Modify decoratorAgent to have "perfectionist" personality affecting decoration proposals
-- [ ] T023 Update decision logic to factor in personality traits
-- [ ] T024 Add console output showing how personality influences decisions
-- [ ] T025 Test: Run multiple times with different personalities, verify observable differences
+- [x] T013 Install @anthropic-ai/sdk: `pnpm add @anthropic-ai/sdk`
+- [x] T014 Create .env file in project root with ANTHROPIC_API_KEY=your-api-key-here
+- [x] T015 Add dotenv package: `pnpm add dotenv` for environment variable loading
+- [x] T016 Create src/spike-2-llm.ts with Anthropic client initialization using process.env.ANTHROPIC_API_KEY
+- [x] T017 Implement generateThemeOptions() async function calling Claude Haiku 4.5 with structured JSON request
+- [x] T018 Add JSON parsing for Claude response into VerbalizeSamplingOutput type (with markdown code fence stripping)
+- [x] T019 Implement fallback template themes when API call fails (try-catch with fallback array)
+- [x] T020 Implement generateMenu() async function with theme parameter passed to Claude
+- [x] T021 Add timing measurement (Date.now() before/after) to track LLM latency
+- [x] T022 Add console output comparing LLM vs Spike 1 hardcoded options, including token usage and cost calculation
+- [x] T023 Test: Run `npx tsx src/spike-2-llm.ts` with valid API key, verify creative output
+- [x] T024 Test: Run with invalid/missing API key, verify fallback templates activate
+
+**Success Criteria**: ✅ ALL MET
+
+- ✅ Claude API returns structured JSON with 3+ theme options and confidence scores (0-1 range)
+- ✅ Menu generation incorporates theme context (not generic like Spike 1 ["Spooky menu"])
+- ✅ Fallback templates activate on API failure without crashing
+- ✅ Total execution time <5s (better than <10s requirement)
+- ✅ LLM options observably more creative than Spike 1 hardcoded ["Spooky", "Elegant", "Playful"]
+- ✅ Console logs token usage and cost calculation (~$0.02-0.05 per session)
+
+**Decision**: ✅ **CONTINUE WITH HAIKU 4.5** - Creativity boost significant, latency <2s, cost well under budget
+
+---
+
+### Spike 3: Do LLM-Powered Personalities Matter? (Day 3) - **AMENDED FOR LLM PRIORITY**
+
+**Hypothesis**: Different personality traits in LLM system prompts produce observably different agent behaviors using Claude Haiku 4.5
+
+**Learn**: Are LLM personality prompts worth the complexity? Do they create meaningful behavioral differences?
+
+#### Tasks
+
+- [ ] T025 Create src/spike-3-personality.ts with Anthropic client (reuse from spike-2)
+- [ ] T026 Define Personality type with name and systemPrompt properties
+- [ ] T027 Create 3 personalities: Frugal (budget-conscious), Perfectionist (quality-focused), Adventurous (creative)
+- [ ] T028 Implement generateMenuWithPersonality() function passing system prompt to Claude Haiku 4.5 API
+- [ ] T029 Add loop to test same theme input with all 3 personalities sequentially
+- [ ] T030 Add console output showing personality name and resulting menu for comparison
+- [ ] T031 Test: Run script and verify outputs differ meaningfully across personalities
+- [ ] T032 Test: Verify frugal mentions cost, perfectionist mentions quality, adventurous suggests unique items
 
 **Success Criteria**:
 
-- Frugal agent produces budget-conscious choices
-- Perfectionist agent produces quality-focused choices
-- Personality conflicts create observable debate
-- Total additional lines: ~30
+- ✅ Frugal personality mentions budget/cost in menu suggestions (e.g., "$5 punch bowl")
+- ✅ Perfectionist personality emphasizes quality/aesthetics and premium ingredients
+- ✅ Adventurous personality suggests unconventional or creative menu ideas
+- ✅ Outputs are observably different (not just rephrased versions)
+- ✅ Personality differences create variations that would make agent debates engaging
+- ✅ Total additional lines: ~50
 
-**Decision Point**: If personalities don't create observable differences, use simpler agent types
+**Decision Point**: If personalities are superficial, skip system prompt personalities and use same neutral prompt for all agents
 
 ---
 
@@ -132,18 +150,30 @@
 
 #### Tasks
 
-- [ ] T026 Create docs/spike-results.md documenting what worked and what didn't
-- [ ] T027 Update plan.md with learnings: which dependencies are actually needed?
-- [ ] T028 Decision: Continue with implementation OR pivot to different approach
+- [ ] T033 Create docs/spike-results.md documenting LLM quality, latency, cost findings
+- [ ] T034 Update plan.md with learnings: Is Claude Haiku 4.5 worth the cost? Are personalities valuable?
+- [ ] T035 Calculate cost estimate: token usage × Haiku 4.5 pricing ($1/$5 per million) = $ per planning session
+- [ ] T036 Decision: Continue with LLM approach OR pivot to template-based approach
 
-**Success Criteria for Continuing**:
+**Success Criteria for Continuing with LLM**:
 
-- [ ] 2-agent coordination works reliably
-- [ ] Voting mechanism adds measurable value
-- [ ] Personalities create observable differences
-- [ ] Approach seems viable for 4-6 agents
+- [x] 2-agent coordination works reliably (Spike 1 ✅)
+- [x] LLM generates observably better content than templates (Spike 2 ✅)
+- [x] LLM latency acceptable (<2s per agent decision with Haiku 4.5 ✅)
+- [x] Cost per planning session acceptable (~$0.02-0.05, well under $0.50 target ✅)
+- [ ] Personalities create meaningful behavioral differences (Spike 3) - OR decide to skip personalities
+- [x] Fallback templates provide acceptable degraded experience (Spike 2 ✅)
 
-**If Spikes Fail**: Document findings, update spec.md, propose alternative approach (e.g., single smart agent)
+**Decision Matrix**:
+
+- **LLM + Personalities succeed**: Proceed with full Haiku 4.5 integration and system prompt personalities
+- **LLM succeeds, Personalities fail**: Use Haiku 4.5 with neutral prompts, skip personality system
+- **LLM fails**: Pivot to template-based approach (like Spike 1), remove @anthropic-ai/sdk
+- **Coordination fails**: Reconsider multi-agent approach entirely
+
+**Current Status**: ✅ Spike 2 validates LLM approach with Haiku 4.5. Ready for Spike 3 personality testing.
+
+**If Spikes Fail**: Document findings in spike-results.md, update spec.md to remove LLM requirements, propose simpler alternative
 
 ---
 

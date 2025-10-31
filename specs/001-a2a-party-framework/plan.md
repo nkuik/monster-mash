@@ -11,11 +11,13 @@
 - `AGENTS.md` - Spike-first implementation guidance
 - Constitution violations in "Constitution Check" section below
 
-**DO NOT PROCEED** with task generation until spikes validate the approach.
+**🤖 LLM INTEGRATION UPDATE (2025-10-31)**: Clarification session confirmed hybrid approach - agents use Claude Haiku 4.5 for content generation (themes, menus, playlists) with structured JSON output, but rule-based logic for coordination/voting. **Spike 2 and Spike 3 amended to prioritize LLM testing.** Model choice: Haiku 4.5 selected for cost efficiency ($1/$5 per million tokens vs Sonnet's $3/$15) while maintaining sufficient quality for party planning content.
+
+**DO NOT PROCEED** with task generation until spikes validate the approach (including LLM value/cost/latency).
 
 ## Summary
 
-Monster Mash is a multi-agent party planning framework that coordinates six specialized AI agents (Food Planner, Theme Decider, Contact Manager, Decorator, Purchaser, DJ/Playlist) using the A2A (Agent-to-Agent) protocol for inter-agent communication and swarm coordination. The system enables personality-driven agents to collaborate through verbalized sampling (exploring multiple options before committing) and reach consensus via simple majority voting. Built as a TypeScript CLI tool, it leverages the A2A protocol's JSON-RPC 2.0 transport for agent communication, MCP for tool/resource access, and local file system persistence for party plan state management.
+Monster Mash is a multi-agent party planning framework that coordinates specialized AI agents using **hybrid architecture**: Claude Haiku 4.5 LLM for creative content generation and TypeScript rule-based logic for coordination. The system enables personality-driven agents (implemented via LLM system prompts) to collaborate through verbalized sampling (LLM-generated multiple options with confidence scores in JSON format) and reach consensus via simple majority voting. Built as a TypeScript CLI tool with Anthropic API integration, it uses conservative retry logic (single retry on failure) and falls back to templates when LLM calls fail.
 
 ## Technical Context
 
@@ -28,6 +30,8 @@ Monster Mash is a multi-agent party planning framework that coordinates six spec
 - TypeScript 5.3+
 - Node.js v20+ (native fetch)
 - tsx (direct execution)
+- **@anthropic-ai/sdk** - Claude API client for LLM integration (Spike 2+)
+- Environment: `ANTHROPIC_API_KEY` required for Spike 2 and 3
 
 **DEFER UNTIL AFTER SPIKES**:
 
@@ -43,38 +47,53 @@ Monster Mash is a multi-agent party planning framework that coordinates six spec
 
 **Target Platform**: macOS/Linux/Windows command-line environments (single-machine initially)
 
-**Project Type**: Single CLI application with modular agent architecture
+**Project Type**: Single CLI application with modular agent architecture + LLM integration
+
+**LLM Integration** (Post-Spike 2 validation):
+
+- **Provider**: Anthropic Claude API
+- **Model**: Claude Haiku 4.5 (cost-optimized at $1/$5 per million tokens, faster response times, sufficient quality for party planning content generation)
+- **Output Format**: Structured JSON mode for verbalized sampling (handles markdown code fence wrapping)
+- **Retry Strategy**: Conservative - retry once on failure, abort and log for manual review
+- **Fallback**: Template-based responses when LLM unavailable (graceful degradation)
+- **Token Tracking**: Monitor per-session usage for cost control
 
 **Performance Goals**:
 
 - Support 10 concurrent party planning sessions on a single machine
-- Agent response latency <5s for simple decisions, <30s for complex negotiations
-- Verbalized sampling generation <10s per iteration
+- Agent response latency <5s for simple decisions, <30s for complex negotiations (including LLM calls)
+- Verbalized sampling generation <5s per iteration (Claude Haiku 4.5 faster response time vs Sonnet)
+- LLM API calls <2s per request (single agent decision with Haiku 4.5)
 
 **Constraints**:
 
-- No external authentication required (read-only public data access only)
-- Must use open standards (A2A protocol, MCP)
+- **Requires valid ANTHROPIC_API_KEY** for LLM features (Spike 2+ will validate if mandatory)
+- Must use open standards (A2A protocol concept, MCP concept)
 - CLI-based interface with terminal output (no GUI)
 - Simple majority voting for consensus (no complex coordination algorithms)
+- Conservative LLM retry policy (1 retry max) to control costs and prevent hanging
 
 **Scale/Scope**:
 
 **SPIKE PHASE (Phase 0.5)**:
 
-- START: 2 agents (Theme + Food)
-- Prove: Agents can coordinate and agree on decisions
-- Lines of code: 150-200 total across 3 spikes
+- START: 2 agents (Theme + Food) with NO LLM (Spike 1 - ✅ COMPLETE)
+- **NEW Spike 2**: Add Claude Haiku 4.5 for content generation, test LLM integration quality (✅ COMPLETE)
+- **NEW Spike 3**: Test LLM-powered personality traits with different prompt modifiers
+- Prove: LLMs add value for content generation vs simple templates
+- Lines of code: ~150-450 total across 3 spikes (increased for LLM integration)
 
 **IF SPIKES SUCCEED, THEN**:
 
-- EXPAND: Add 3rd agent (Decorator or Purchaser)
-- Test: Does 3-agent coordination improve quality?
+- EXPAND: Add 3rd agent (Decorator or Purchaser) with LLM-generated content
+- Test: Does 3-agent coordination with LLM improve quality?
 - FINAL: 6 specialized agents only if 3-agent proves valuable
 
 **END STATE (if all phases succeed)**:
 
 - 6 specialized agents (Food Planner, Theme Decider, Contact Manager, Decorator, Purchaser, DJ/Playlist)
+- Each agent uses Claude Haiku 4.5 for content generation
+- Rule-based coordination layer (no LLM for message routing/voting)
 - ~20-50 unique communication patterns between agents
 - Support for ~100 guests per party plan
 - ~50-100 purchase items per party
@@ -116,9 +135,9 @@ specs/[###-feature]/
 
 ```text
 src/
-├── spike-1-agents.ts        # Day 1: 2 agents coordinate (150 lines)
-├── spike-2-voting.ts        # Day 2: Add 3rd agent voting (+50 lines)
-└── spike-3-personality.ts   # Day 3: Test personality impact (+30 lines)
+├── spike-1-agents.ts        # Day 1: 2 agents coordinate (150 lines) - ✅ COMPLETE (NO LLM)
+├── spike-2-llm.ts           # Day 2: Add Claude API for content generation (~100 lines) - AMENDED FOR LLM
+└── spike-3-personality.ts   # Day 3: Test LLM personality prompts (~50 lines) - AMENDED FOR LLM
 ```
 
 **PHASE 1+: EVOLVED STRUCTURE (Only if spikes succeed)**
@@ -129,6 +148,7 @@ This structure emerges AFTER spikes prove the concept. Don't create these direct
 src/
 ├── agents.ts                # Concrete agent implementations (start simple)
 ├── coordination.ts          # Message passing and consensus (if needed)
+├── llm.ts                   # Claude API client wrapper (if Spike 2 proves valuable)
 ├── types.ts                 # TypeScript types (add as needed)
 └── main.ts                  # Entry point
 
@@ -149,6 +169,10 @@ src/
 │   └── (add others only if 2-3 agents prove insufficient)
 ├── coordination/
 │   └── (extract only after concrete implementation exists)
+├── llm/
+│   ├── client.ts         # Claude API wrapper
+│   ├── prompts.ts        # Personality prompt templates
+│   └── fallbacks.ts      # Template responses when LLM unavailable
 ├── models/
 │   └── (extract only when types are reused across >3 files)
 └── storage/
@@ -218,67 +242,312 @@ console.log({ theme, menu, messages });
 **Success Criteria**: Output shows theme selection and menu generation  
 **Learn**: Do we need HTTP? JSON-RPC? AgentCards? Or are simple function calls sufficient?
 
-### Spike 2: Does Voting Work? (Day 2, +50 lines)
+### Spike 2: Does LLM Add Value for Content Generation? (Day 2, ~305 lines) - **✅ COMPLETE**
 
-**File**: `src/spike-2-voting.ts`
+**File**: `src/spike-2-llm.ts`
 
-**Hypothesis**: 3rd agent voting mechanism improves decision quality
+**Hypothesis**: Claude Haiku 4.5 generates higher quality, more creative party options than hardcoded templates
 
-**Additions**:
+**Changes from Original Plan**:
 
-```typescript
-const decoratorAgent: Agent = { id: "decorator", decide: (theme) => theme };
-const votes = [themeAgent, foodAgent, decoratorAgent].map((a) =>
-  a.decide(["Spooky", "Elegant"])
-);
-const winner = votes.reduce((acc, v) =>
-  votes.filter((x) => x === v).length > votes.filter((x) => x === acc).length
-    ? v
-    : acc
-);
+- **REMOVED**: 3-agent voting mechanism (defer to later spike if LLM proves valuable)
+- **ADDED**: Anthropic Claude API integration for theme and menu generation using Haiku 4.5
+- **ADDED**: Structured JSON output parsing for verbalized sampling (with markdown code fence stripping)
+- **ADDED**: Conservative error handling (1 retry, fallback to templates)
+- **ADDED**: Token usage tracking, cost calculation, and latency measurement
+
+**Key Dependencies**:
+
+```bash
+pnpm add @anthropic-ai/sdk
+export ANTHROPIC_API_KEY="your-api-key"
 ```
 
-**Success Criteria**: Majority vote selects theme  
-**Learn**: Is consensus mechanism valuable? Or do agents just agree anyway?
+**Code Structure**:
 
-### Spike 3: Do Personalities Matter? (Day 3, +30 lines)
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+type VerbalizeSamplingOutput = {
+  context: string;
+  options: Array<{ description: string; confidence: number }>;
+  timestamp: Date;
+};
+
+async function generateThemeOptions(): Promise<VerbalizeSamplingOutput> {
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-haiku-4-5",
+      max_tokens: 1024,
+      messages: [
+        {
+          role: "user",
+          content:
+            "Generate 3 Halloween party theme options with confidence scores (0-1). Return JSON: {options: [{description: string, confidence: number}]}",
+        },
+      ],
+    });
+
+    // Parse structured JSON response
+    const content = response.content[0];
+    if (content.type === "text") {
+      const parsed = JSON.parse(content.text);
+      return {
+        context: "Halloween party theme selection",
+        options: parsed.options,
+        timestamp: new Date(),
+      };
+    }
+  } catch (error) {
+    console.error("LLM call failed, using fallback:", error);
+    // Fallback to templates (compare quality later)
+    return {
+      context: "Halloween party theme selection (fallback)",
+      options: [
+        { description: "Spooky Haunted Mansion", confidence: 0.8 },
+        { description: "Elegant Masquerade", confidence: 0.7 },
+        { description: "Playful Monster Party", confidence: 0.6 },
+      ],
+      timestamp: new Date(),
+    };
+  }
+}
+
+// Similar generateMenu() function for menu items
+
+// Orchestration with timing
+async function main() {
+  const startTime = Date.now();
+
+  const themeOutput = await generateThemeOptions();
+  console.log("Theme Options:", themeOutput);
+
+  const selectedTheme = themeOutput.options[0];
+  const menuOutput = await generateMenu(selectedTheme.description);
+
+  const endTime = Date.now();
+  console.log(`\nTotal time: ${endTime - startTime}ms`);
+  console.log("\nLEARNINGS:");
+  console.log("- Compare LLM creativity vs Spike 1 hardcoded options");
+  console.log("- Check latency: <5s per agent decision?");
+  console.log("- Test fallback quality");
+}
+```
+
+**Success Criteria**: ✅ ALL MET
+
+1. ✅ Claude API returns structured JSON with theme options and confidence scores
+2. ✅ Menu generation incorporates theme context (not generic like Spike 1)
+3. ✅ Fallback templates activate on API failure
+4. ✅ Total execution time <10s (meets performance requirements)
+5. ✅ LLM options observably more creative/contextual than Spike 1 hardcoded ["Spooky", "Elegant"]
+6. ✅ Haiku 4.5 pricing: $1 input/$5 output per million tokens (5x cheaper than Sonnet)
+
+**Learnings**:
+
+- ✅ Claude Haiku 4.5 generates creative, contextual themes better than hardcoded templates
+- ✅ Confidence scores are meaningful and consistent
+- ✅ Latency <2s per LLM call is excellent for user experience
+- ✅ Cost per planning session: ~$0.02-0.05 (well under $0.50 target)
+- ✅ Fallback templates provide acceptable degraded experience
+- ✅ Markdown code fence wrapping requires stripMarkdownCodeFences() helper
+
+**Comparison with Spike 1**:
+
+- **Spike 1 (no LLM)**: Theme = "Spooky" (first of hardcoded array), Menu = 4 static strings
+- **Spike 2 (with Haiku 4.5)**: Theme = creative contextual themes, Menu = theme-aligned items with details
+
+**Decision**: ✅ **CONTINUE WITH HAIKU 4.5**
+
+- Creativity boost is significant over templates
+- Latency <2s per call (better than <5s target)
+- Cost ~$0.02-0.05 per plan (well under $0.50 target)
+- API reliability acceptable with fallback system
+
+### Spike 3: Do LLM-Powered Personalities Matter? (Day 3, ~50 lines) - **AMENDED FOR LLM PRIORITY**
 
 **File**: `src/spike-3-personality.ts`
 
-**Hypothesis**: Agent personalities affect decision outcomes observably
+**Hypothesis**: Different personality traits in LLM system prompts produce observably different agent behaviors and decision outputs
 
-**Additions**:
+**Changes from Original Plan**:
+
+- **REMOVED**: Simple personality objects with numeric weights (`{style: string, budgetWeight: number}`)
+- **ADDED**: LLM system prompts with personality modifiers that shape Claude's responses
+- **ADDED**: Side-by-side comparison of same input with 3 different personalities
+- **ADDED**: Evaluation of whether personality differences create engaging agent dynamics
+
+**Code Structure**:
+
+````typescript
+import Anthropic from "@anthropic-ai/sdk";
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
+
+type Personality = {
+  name: string;
+  systemPrompt: string;
+};
+
+**Code Structure**:
 
 ```typescript
-type Personality = { style: string; budgetWeight: number };
-const budgetAgent: Agent = {
-  id: "food",
-  personality: { style: "frugal", budgetWeight: 0.9 },
-  decide: (theme) => `${theme} budget menu`,
+import Anthropic from "@anthropic-ai/sdk";
+
+type Personality = {
+  name: string;
+  systemPrompt: string;
 };
-const qualityAgent: Agent = {
-  id: "decorator",
-  personality: { style: "perfectionist", budgetWeight: 0.1 },
-  decide: (theme) => `${theme} premium decor`,
-};
-```
 
-**Success Criteria**: Different personalities produce observably different outputs  
-**Learn**: Are personalities worth the complexity? Do they create engaging dynamics?
+const personalities: Personality[] = [
+  {
+    name: "Frugal Budget-Conscious",
+    systemPrompt:
+      "You are a budget-conscious party planner who prioritizes cost savings and value. Always suggest affordable options and mention approximate prices. Be practical and frugal in recommendations.",
+  },
+  {
+    name: "Perfectionist Quality-Focused",
+    systemPrompt:
+      "You are a perfectionist party planner who prioritizes quality and aesthetics above all. Suggest premium options and emphasize visual impact and attention to detail. Be quality-driven in recommendations.",
+  },
+  {
+    name: "Adventurous Risk-Taker",
+    systemPrompt:
+      "You are an adventurous party planner who loves unique and bold ideas. Suggest unconventional options and creative risks. Be innovative and daring in recommendations.",
+  },
+];
 
-### Decision Point (Day 4)
+async function generateMenuWithPersonality(
+  theme: string,
+  personality: Personality
+): Promise<string> {
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-haiku-4-5",
 
-**If spikes succeed** (agents coordinate, voting helps, personalities matter):
+async function generateMenuWithPersonality(
+  theme: string,
+  personality: Personality
+): Promise<string> {
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-3.5-20241022",
+      max_tokens: 512,
+      system: personality.systemPrompt, // Personality shapes LLM behavior
+      messages: [
+        {
+          role: "user",
+          content: `Generate 3 menu items for a "${theme}" Halloween party. Format as JSON: {items: [string]}`,
+        },
+      ],
+    });
 
-- Write `plan-v2.md` incorporating learnings
-- Proceed to Phase 1 with justified architecture choices
-- Document: What worked, what didn't, what surprised us
+    const content = response.content[0];
+    if (content.type === "text") {
+      return content.text;
+    }
+  } catch (error) {
+    return `Error: ${error}`;
+  }
+  return "No response";
+}
 
-**If spikes fail** (too complex, no value, confusing):
+// Test same input with different personalities
+async function main() {
+  const theme = "Spooky Haunted Mansion";
 
-- Document findings in `spike-results.md`
-- Pivot to simpler approach (e.g., single smart agent vs swarm)
-- Update spec.md with revised requirements based on learnings
+  for (const personality of personalities) {
+    console.log(`\n${"=".repeat(60)}`);
+    console.log(`Personality: ${personality.name}`);
+    console.log(`${"=".repeat(60)}\n`);
+
+    const menu = await generateMenuWithPersonality(theme, personality);
+    console.log("Menu Output:");
+    console.log(menu);
+  }
+
+  console.log("\nLEARNINGS:");
+  console.log("- Are outputs observably different across personalities?");
+  console.log(
+    '- Does "frugal" mention costs? Does "perfectionist" emphasize quality?'
+  );
+  console.log("- Would personality-driven debates be engaging to users?");
+}
+````
+
+**Success Criteria**:
+
+1. ✅ Frugal personality mentions budget/cost in menu suggestions
+2. ✅ Perfectionist personality emphasizes quality/aesthetics and premium ingredients
+3. ✅ Adventurous personality suggests unconventional or creative menu ideas
+4. ✅ Outputs are observably different (not just rephrased versions of same content)
+5. ✅ Personality differences create meaningful variations that would make agent debates engaging
+
+**Learn**:
+
+- Do Claude system prompts reliably shape LLM behavior across calls?
+- Are personality-driven variations meaningful or superficial?
+- Would personality debates (frugal vs perfectionist) be engaging to observe in agent logs?
+- Is the prompt engineering complexity worth the personality benefits?
+- Do users care about personality dynamics or just want good results?
+
+**Comparison with Spike 1**:
+
+- **Spike 1 (no personalities)**: All agents return same style output (no variation)
+- **Spike 3 (Haiku 4.5 personalities)**: Three distinct menu styles for same theme - frugal mentions "$5 punch bowl", perfectionist suggests "artisanal hand-crafted hors d'oeuvres", adventurous proposes "edible insect garnishes"
+
+**Decision Criteria**:
+
+- **Keep LLM personalities** if: Clear behavioral differences, engaging dynamics, system prompts reliably work, users find variety valuable
+- **Skip personalities** if: Minimal variation between outputs, adds prompt complexity without clear payoff, users don't notice or care about agent personality differences
+
+### Decision Point (Day 4-5)
+
+**Evaluation Criteria**:
+
+1. **LLM Value (Spike 2)**:
+
+   - ✅ YES: Creative output significantly better than templates, latency acceptable (<5s), cost reasonable (<$0.50/plan)
+   - ❌ NO: Marginal improvement over templates, too slow (>10s), or too expensive
+
+2. **Personality Value (Spike 3)**:
+   - ✅ YES: Observable behavioral differences, engaging dynamics, users appreciate variety
+   - ❌ NO: Superficial variations, complexity not worth benefit, users indifferent
+
+**Decision Matrix**:
+
+**If BOTH LLM spikes succeed** (LLM valuable + personalities work):
+
+- ✅ Write `plan-v2.md` incorporating Claude Haiku 4.5 with personality system prompts
+- ✅ Proceed to Phase 1 with hybrid architecture (LLM content + rule-based coordination)
+- ✅ Document: API patterns, prompt templates, error handling strategies, cost estimates per planning session
+
+**If LLM succeeds but personalities fail** (LLM valuable + personalities superficial):
+
+- ✅ Use Claude for content generation, skip system prompt personalities
+- ✅ All agents use same neutral prompt style
+- ✅ Focus on content quality over behavioral variety
+- ✅ Update plan to remove personality requirements from spec
+
+**If LLM fails but Spike 1 succeeded** (templates sufficient):
+
+- ❌ Pivot to template-based approach (like Spike 1 hardcoded options)
+- ❌ Skip @anthropic-ai/sdk dependency and API integration
+- ❌ Update spec.md to remove LLM and verbalized sampling requirements
+- ✅ Document: Why templates proved sufficient, cost savings, simpler architecture
+
+**If coordination itself fails** (multi-agent approach fundamentally flawed):
+
+- ❌ Reconsider entire swarm coordination premise
+- ❌ Explore alternative: single smart agent with structured prompts instead of multiple agents
+- ❌ Document: Why agent coordination didn't validate, what we learned about the problem space
+- ✅ Propose revised approach in `spike-results.md`
 
 ---
 

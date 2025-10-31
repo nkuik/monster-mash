@@ -140,15 +140,17 @@ A user wants Purchaser agent to research actual prices for decorations, food ing
 
 #### Verbalized Sampling
 
-- **FR-014**: Each agent MUST use verbalized sampling when proposing solutions - generating multiple options (minimum 3) with probability/confidence scores
+- **FR-014**: Each agent MUST use verbalized sampling when proposing solutions - generating multiple options (minimum 3) with probability/confidence scores using LLM-based content generation
 - **FR-015**: Verbalized sampling outputs MUST include structured format: decision context, array of proposals, confidence/probability score per option (0-1 or percentage), timestamp
+- **FR-015a**: LLM outputs for verbalized sampling MUST use Claude's JSON mode to return structured typed objects ensuring reliable parsing and validation
 - **FR-016**: System MUST capture and aggregate verbalized sampling outputs across all agents for user visibility
 - **FR-017**: Agents MUST use verbalized sampling to propose alternative scenarios when constraints change (e.g., budget reduction triggers cost-saving alternatives)
+- **FR-017a**: Agents MUST use rule-based logic for coordination tasks (message routing, voting, consensus calculation) to ensure deterministic and reliable swarm behavior
 
 #### Agent Specialization Capabilities
 
-- **FR-018**: Food Planner agent MUST determine menu based on guest count, dietary restrictions, and theme alignment
-- **FR-019**: Food Planner agent MUST use verbalized sampling to generate diverse menu options with probability assessments
+- **FR-018**: Food Planner agent MUST determine menu based on guest count, dietary restrictions, and theme alignment using LLM-generated content
+- **FR-019**: Food Planner agent MUST use verbalized sampling with LLM to generate diverse menu options with probability assessments
 - **FR-020**: Theme Decider agent MUST propose Halloween theme options considering venue, guest demographics, and budget
 - **FR-021**: Theme Decider agent MUST use verbalized sampling to propose multiple themes with confidence scores
 - **FR-022**: Contact Manager agent MUST manage guest list and contact information
@@ -191,11 +193,19 @@ A user wants Purchaser agent to research actual prices for decorations, food ing
 - **FR-049**: System MUST track simulated budget usage vs. estimated actual costs with variance reporting
 - **FR-050**: System MUST generate final actionable shopping list for user to execute manually, including vendor links and estimated prices
 
+#### LLM Integration
+
+- **FR-050a**: System MUST integrate with Anthropic Claude API (Claude Haiku 4.5 model) for LLM-based content generation requiring valid API key configuration
+- **FR-050b**: System MUST handle LLM API failures gracefully by retrying once on failure, then aborting if still failing and logging error details for manual review
+- **FR-050c**: System MUST track LLM token usage per planning session for cost monitoring and optimization
+- **FR-050d**: System MUST fall back to cached responses or simple templates when LLM calls fail after retry, ensuring planning can continue with degraded quality rather than complete failure
+
 #### Personality-Driven Interactions
 
-- **FR-051**: Agent personalities MUST influence negotiation style during conflict resolution (e.g., perfectionist decorator advocates strongly for quality, budget-conscious purchaser acts as financial gatekeeper)
+- **FR-051**: Agent personalities MUST influence negotiation style during conflict resolution using LLM-generated arguments that reflect personality traits (e.g., perfectionist decorator advocates strongly for quality, budget-conscious purchaser acts as financial gatekeeper)
 - **FR-052**: System MUST log personality-driven arguments and debates so users can understand different agent perspectives
 - **FR-053**: Personality conflicts MUST create observable engaging dynamics rather than opaque black-box decision-making
+- **FR-053a**: Personality traits MUST be implemented as LLM prompt modifiers that shape generated content while coordination logic remains rule-based
 
 ### Key Entities
 
@@ -265,3 +275,8 @@ A user wants Purchaser agent to research actual prices for decorations, food ing
 - Q: When user provides an infeasible budget (e.g., $50 for 100 guests), how should the system respond? → A: Show warning with minimum budget suggestion, allow user to confirm or adjust
 - Q: How should agent state and planning progress be persisted for resumption after interruptions? → A: Persisted to local file system (JSON/YAML files)
 - Q: What level of access should the system have to external services for price lookup and invitation sending? → A: Read-only - system queries publicly available price information, invitations manually sent by user
+- Q: Do agents use LLM models to generate decisions and verbalized sampling outputs? → A: Hybrid - Agents use LLMs for content generation (menu options, themes, playlists) but rule-based logic for coordination/voting
+- Q: Which LLM provider/API should agents use for content generation? → A: Anthropic Claude - Requires API key, paid per token, strong reasoning
+- Q: Which Claude model tier should be used for agent content generation? → A: Claude Haiku 4.5 - Faster and more cost-effective than Sonnet 3.5, sufficient quality for party planning content generation (updated 2025-10-31 after Spike 2 validation)
+- Q: How should LLM outputs be structured for verbalized sampling (multiple options with confidence scores)? → A: Structured output - Use Claude's JSON mode to return typed objects with option arrays and scores
+- Q: What retry and cost control strategy should be used for LLM API calls? → A: Conservative retry - Retry once on failure, abort if still failing, log for manual review
