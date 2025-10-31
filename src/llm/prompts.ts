@@ -210,6 +210,7 @@ Theme Description: ${theme.description}${moodText}
 
 IMPORTANT: Generate 1-2 playlist options ONLY. Each playlist should have 5-8 songs.
 Keep descriptions concise (1-2 sentences maximum).
+Songs must be simple strings in format: "Song Title - Artist Name"
 
 The playlist should:
 - Match the theme atmosphere perfectly
