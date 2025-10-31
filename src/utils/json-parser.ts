@@ -50,19 +50,67 @@ export function extractJSON(text: string): string {
   // First strip any code fences
   const cleaned = stripMarkdownCodeFences(text);
 
-  // Try to find JSON object or array using regex
-  // Look for {...} or [...]
-  const objectMatch = cleaned.match(/\{[\s\S]*\}/)?.[0];
-  if (objectMatch) {
-    return objectMatch;
+  // Find first { or [ to start of JSON
+  const firstBrace = cleaned.indexOf("{");
+  const firstBracket = cleaned.indexOf("[");
+
+  let startIndex = -1;
+  let isObject = true;
+
+  if (firstBrace !== -1 && firstBracket !== -1) {
+    // Both found, use whichever comes first
+    startIndex = Math.min(firstBrace, firstBracket);
+    isObject = firstBrace < firstBracket;
+  } else if (firstBrace !== -1) {
+    startIndex = firstBrace;
+    isObject = true;
+  } else if (firstBracket !== -1) {
+    startIndex = firstBracket;
+    isObject = false;
+  } else {
+    // No JSON found
+    return cleaned;
   }
 
-  const arrayMatch = cleaned.match(/\[[\s\S]*\]/)?.[0];
-  if (arrayMatch) {
-    return arrayMatch;
+  // Find matching closing brace/bracket by counting nesting depth
+  let depth = 0;
+  const openChar = isObject ? "{" : "[";
+  const closeChar = isObject ? "}" : "]";
+  let inString = false;
+  let escapeNext = false;
+
+  for (let i = startIndex; i < cleaned.length; i++) {
+    const char = cleaned[i];
+
+    if (escapeNext) {
+      escapeNext = false;
+      continue;
+    }
+
+    if (char === "\\") {
+      escapeNext = true;
+      continue;
+    }
+
+    if (char === '"' && !escapeNext) {
+      inString = !inString;
+      continue;
+    }
+
+    if (inString) continue;
+
+    if (char === openChar) {
+      depth++;
+    } else if (char === closeChar) {
+      depth--;
+      if (depth === 0) {
+        // Found matching closing character
+        return cleaned.substring(startIndex, i + 1);
+      }
+    }
   }
 
-  // If no match, return cleaned text as-is
+  // Couldn't find complete JSON
   return cleaned;
 }
 
@@ -87,12 +135,13 @@ export function parseJSON<T = any>(text: string): T {
         const extracted = extractJSON(text);
         return JSON.parse(extracted);
       } catch (thirdError) {
-        // All parsing attempts failed
+        // All parsing attempts failed - show first 500 chars and actual error
+        const preview =
+          text.length > 500 ? text.substring(0, 500) + "..." : text;
+        const actualError =
+          thirdError instanceof Error ? thirdError.message : String(thirdError);
         throw new Error(
-          `Failed to parse JSON after 3 attempts. Original text: ${text.substring(
-            0,
-            200
-          )}...`
+          `Failed to parse JSON after 3 attempts. Parse error: ${actualError}. Original text: ${preview}`
         );
       }
     }

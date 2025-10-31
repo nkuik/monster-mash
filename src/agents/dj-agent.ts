@@ -59,7 +59,7 @@ export class DJAgent implements Agent {
       {
         prompt: userPrompt,
         systemPrompt,
-        maxTokens: 1536,
+        maxTokens: 4096, // Increased to accommodate detailed playlist descriptions
         temperature: 0.8,
         responseFormat: "json",
       },
@@ -71,6 +71,9 @@ export class DJAgent implements Agent {
       console.log(
         `⚠️  DJAgent: LLM failed, using fallback templates (${response.latencyMs}ms)`
       );
+      if (response.error) {
+        console.log(`   Error: ${response.error}`);
+      }
     } else {
       console.log(
         `✅ DJAgent: LLM generated playlist successfully (${response.latencyMs}ms)`

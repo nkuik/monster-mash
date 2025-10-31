@@ -103,7 +103,7 @@ export class ThemeAgent implements Agent {
       {
         prompt: userPrompt,
         systemPrompt,
-        maxTokens: 1024,
+        maxTokens: 4096, // Increased to accommodate detailed theme descriptions
         temperature: 0.8, // Higher temperature for more creative themes
         responseFormat: "json",
       },

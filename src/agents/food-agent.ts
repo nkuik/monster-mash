@@ -70,7 +70,7 @@ export class FoodAgent implements Agent {
       {
         prompt: userPrompt,
         systemPrompt,
-        maxTokens: 1536,
+        maxTokens: 3072, // Increased from 1536 to avoid truncating JSON responses
         temperature: 0.7,
         responseFormat: "json",
       },

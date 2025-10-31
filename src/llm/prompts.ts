@@ -208,9 +208,11 @@ export function createPlaylistPrompt(theme: {
 Curate a Halloween party playlist for a "${theme.name}" party:
 Theme Description: ${theme.description}${moodText}
 
+IMPORTANT: Generate 1-2 playlist options ONLY. Each playlist should have 5-8 songs.
+Keep descriptions concise (1-2 sentences maximum).
+
 The playlist should:
 - Match the theme atmosphere perfectly
-- Include 10-15 song suggestions
 - Mix classic Halloween tracks with theme-appropriate music
 - Consider pacing (energetic vs atmospheric)
 
@@ -226,11 +228,13 @@ Example output structure:
       "confidence": 0.89,
       "data": {
         "name": "Gothic Vampire Evening Soundscape",
-        "description": "Classical and dark ambient tracks creating sophisticated eeriness",
+        "description": "Classical and dark ambient tracks creating eeriness",
         "songs": [
           "Toccata and Fugue in D Minor - Bach",
           "Moonlight Sonata - Beethoven",
-          "Dark Ambient Atmosphere Track"
+          "Carmina Burana - Carl Orff",
+          "Danse Macabre - Saint-Saëns",
+          "Night on Bald Mountain - Mussorgsky"
         ],
         "durationMinutes": 180
       }
