@@ -288,7 +288,3 @@ A user wants Purchaser agent to research actual prices for decorations, food ing
 - Q: How should personality system prompts incorporate verbalized sampling behavior? → A: Embed verbalized sampling instructions in each personality system prompt (generate multiple options with confidence scores as part of personality behavior)
 - Q: Should Monster Mash support external agent integration via A2A protocol, or is this a closed internal swarm? → A: Closed internal swarm - All 6 agents are internal TypeScript classes using simple message passing (validated by Spike 1-3). No A2A protocol (JSON-RPC 2.0, AgentCards, HTTP servers) implementation required. "A2A" refers to conceptual agent-to-agent collaboration pattern, not the A2A protocol standard.
 - Q: Should LLM outputs include markdown code fences or additional text? → A: No - All agent system prompts must explicitly instruct LLMs to return ONLY valid JSON with no markdown code fences (no `json` wrappers) and no additional explanatory text. This prevents parsing failures (observed in Spike 2 before implementing stripMarkdownCodeFences workaround).
-
-```
-
-```
