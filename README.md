@@ -19,11 +19,14 @@ cp .env.example .env
 # Edit .env and add: ANTHROPIC_API_KEY=your-key-here
 
 # Run spike experiments (validates approach)
-npx tsx src/spike-1-agents.ts    # Test 2-agent coordination
-npx tsx src/spike-2-llm.ts        # Test LLM integration
-npx tsx src/spike-3-personality.ts # Test personality system
+pnpm spike-1    # Test 2-agent coordination
+pnpm spike-2    # Test LLM integration
+pnpm spike-3    # Test personality system
 
-# Run main application (when MVP complete)
+# Run main application
+pnpm start -- --budget 500 --guests 50 --date 2025-10-31
+
+# Or run directly
 npx tsx src/main.ts --budget 500 --guests 50 --date 2025-10-31
 ```
 
@@ -117,7 +120,7 @@ ANTHROPIC_API_KEY=your-anthropic-api-key-here
 
 ```bash
 # Run Spike 1 (no API key needed)
-npx tsx src/spike-1-agents.ts
+pnpm spike-1
 
 # Expected output: Theme selected, menu generated, 4 messages logged
 ```
@@ -132,30 +135,30 @@ npx tsx src/spike-1-agents.ts
 
 ```bash
 # Spike 1: Test 2-agent coordination (no API key needed)
-npx tsx src/spike-1-agents.ts
+pnpm spike-1
 # Output: Theme selection + menu generation using simple TypeScript functions
 
 # Spike 2: Test LLM integration (requires API key)
-npx tsx src/spike-2-llm.ts
+pnpm spike-2
 # Output: Claude-generated themes + menus with token usage and cost metrics
 
 # Spike 3: Test personality system (requires API key)
-npx tsx src/spike-3-personality.ts
+pnpm spike-3
 # Output: 3 different menu styles (Frugal, Perfectionist, Adventurous) for same theme
 ```
 
-### Run Main Application (MVP in progress)
+### Run Main Application
 
 **Basic usage**:
 
 ```bash
-npx tsx src/main.ts --budget 500 --guests 50 --date 2025-10-31
+pnpm start -- --budget 500 --guests 50 --date 2025-10-31
 ```
 
 **With personality enabled**:
 
 ```bash
-npx tsx src/main.ts --budget 500 --guests 50 --date 2025-10-31 --personality frugal
+pnpm start -- --budget 500 --guests 50 --date 2025-10-31 --personality frugal
 ```
 
 **Available personalities**: `frugal`, `perfectionist`, `adventurous`, `default`
@@ -172,7 +175,7 @@ npx tsx src/main.ts --budget 500 --guests 50 --date 2025-10-31 --personality fru
 **Example with all options**:
 
 ```bash
-npx tsx src/main.ts \
+pnpm start -- \
   --budget 1000 \
   --guests 75 \
   --date 2025-10-31 \
@@ -180,6 +183,8 @@ npx tsx src/main.ts \
   --output party-plan.json \
   --verbose
 ```
+
+**Note**: The `--` is required when using `pnpm start` to pass arguments through to the script. Alternatively, you can run directly with `npx tsx src/main.ts` without the `--`.
 
 ---
 

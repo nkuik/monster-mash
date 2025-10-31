@@ -4,6 +4,7 @@
   "description": "A2A Party Planning Framework - Experimental multi-agent coordination for Halloween party planning",
   "type": "module",
   "scripts": {
+    "start": "tsx src/main.ts",
     "dev": "tsx watch src/main.ts",
     "spike-1": "tsx src/spike-1-agents.ts",
     "spike-2": "tsx src/spike-2-llm.ts",
