@@ -1,9 +1,11 @@
-# Feature Specification: Monster Mash - A2A Party Planning Framework
+# Feature Specification: Monster Mash - Agent-to-Agent Party Planning Framework
 
 **Feature Branch**: `001-a2a-party-framework`  
 **Created**: 31 October 2025  
 **Status**: Draft  
-**Input**: User description: "Monster Mash: A2A Party Planning Framework with collaborative multi-agent swarm coordination for Halloween party planning using specialized agents with personality traits and verbalized sampling"
+**Input**: User description: "Monster Mash: Agent-to-Agent (A2A) Party Planning Framework with collaborative multi-agent swarm coordination for Halloween party planning using specialized agents with personality traits and verbalized sampling"
+
+**Note**: "A2A" refers to the agent-to-agent collaboration pattern (swarm coordination), NOT the A2A protocol standard (JSON-RPC 2.0, AgentCards, HTTP servers). This is a closed internal swarm using simple TypeScript message passing.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -123,13 +125,14 @@ A user wants Purchaser agent to research actual prices for decorations, food ing
 
 - **FR-001**: Framework MUST spawn 6 specialized agent types (Food Planner, Theme Decider, Contact Manager, Decorator, Purchaser, DJ/Playlist) when party planning task is initiated
 - **FR-002**: Each agent MUST be initialized with predefined personality configuration (risk tolerance, budget sensitivity, quality standards, persuasiveness)
-- **FR-003**: Framework MUST support dynamic agent addition or removal based on party planning needs (e.g., optional photographer/videographer agent)
+- **FR-003**: Framework MUST support dynamic agent addition or removal based on party planning needs (e.g., optional photographer/videographer agent) within the internal TypeScript class system - no external agent discovery or A2A protocol AgentCards required
 - **FR-004**: System MUST detect agent failures and either re-spawn failed agent or redistribute responsibilities to remaining agents
 - **FR-005**: Framework MUST persist agent state and planning progress to local file system (JSON or YAML format) to allow resumption after interruptions
 
 #### Swarm Coordination & Communication
 
-- **FR-006**: System MUST provide message-passing infrastructure for agent-to-agent communication
+- **FR-006**: System MUST provide internal message-passing infrastructure for agent-to-agent communication using TypeScript objects and event channels (no A2A protocol, no HTTP, no JSON-RPC 2.0 required)
+- **FR-006a**: All 6 agents (Food Planner, Theme Decider, Contact Manager, Decorator, Purchaser, DJ/Playlist) MUST be internal TypeScript classes within the same process - no external agent integration or inter-process communication required
 - **FR-007**: System MUST provide broadcast channels for system-wide updates (e.g., budget change notifications)
 - **FR-008**: All agent communications MUST be logged with timestamps, agent identities, and message content for user transparency
 - **FR-009**: Agents MUST participate in collaborative decision-making discussions where each agent proposes recommendations
@@ -205,7 +208,8 @@ A user wants Purchaser agent to research actual prices for decorations, food ing
 - **FR-051**: Agent personalities MUST influence negotiation style during conflict resolution using LLM-generated arguments that reflect personality traits (e.g., perfectionist decorator advocates strongly for quality, budget-conscious purchaser acts as financial gatekeeper)
 - **FR-052**: System MUST log personality-driven arguments and debates so users can understand different agent perspectives
 - **FR-053**: Personality conflicts MUST create observable engaging dynamics rather than opaque black-box decision-making
-- **FR-053a**: Personality traits MUST be implemented as LLM prompt modifiers that shape generated content while coordination logic remains rule-based
+- **FR-053a**: Personality traits MUST be implemented as LLM system prompt modifiers that shape generated content while coordination logic remains rule-based
+- **FR-053b**: Personality system prompts MUST explicitly instruct agents to generate multiple options (minimum 3) with confidence scores (0-1 scale) as part of their core behavior, embedding verbalized sampling into personality expression
 
 ### Key Entities
 
@@ -280,3 +284,9 @@ A user wants Purchaser agent to research actual prices for decorations, food ing
 - Q: Which Claude model tier should be used for agent content generation? → A: Claude Haiku 4.5 - Faster and more cost-effective than Sonnet 3.5, sufficient quality for party planning content generation (updated 2025-10-31 after Spike 2 validation)
 - Q: How should LLM outputs be structured for verbalized sampling (multiple options with confidence scores)? → A: Structured output - Use Claude's JSON mode to return typed objects with option arrays and scores
 - Q: What retry and cost control strategy should be used for LLM API calls? → A: Conservative retry - Retry once on failure, abort if still failing, log for manual review
+- Q: How should personality system prompts incorporate verbalized sampling behavior? → A: Embed verbalized sampling instructions in each personality system prompt (generate multiple options with confidence scores as part of personality behavior)
+- Q: Should Monster Mash support external agent integration via A2A protocol, or is this a closed internal swarm? → A: Closed internal swarm - All 6 agents are internal TypeScript classes using simple message passing (validated by Spike 1-3). No A2A protocol (JSON-RPC 2.0, AgentCards, HTTP servers) implementation required. "A2A" refers to conceptual agent-to-agent collaboration pattern, not the A2A protocol standard.
+
+```
+
+```
