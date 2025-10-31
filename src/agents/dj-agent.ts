@@ -66,6 +66,17 @@ export class DJAgent implements Agent {
       fallback
     );
 
+    // Log LLM success/failure for observability
+    if (response.source === "fallback") {
+      console.log(
+        `⚠️  DJAgent: LLM failed, using fallback templates (${response.latencyMs}ms)`
+      );
+    } else {
+      console.log(
+        `✅ DJAgent: LLM generated playlist successfully (${response.latencyMs}ms)`
+      );
+    }
+
     if (!response.success || !response.data) {
       return {
         agentId: this.id,

@@ -1,8 +1,9 @@
 {
   "constraints": {
     "budget": 1000,
-    "guestCount": 15,
-    "date": "2025-10-31"
+    "guestCount": 75,
+    "date": "2025-10-31",
+    "personality": "perfectionist"
   },
   "theme": {
     "name": "Classic Spooky Halloween",
@@ -21,186 +22,99 @@
   },
   "menu": [
     {
-      "name": "Mummy Hot Dogs with Cheese Bandages",
-      "description": "Crescent roll-wrapped hot dogs with melted cheese strips to resemble mummy bandages, topped with olive eyes for a classic spooky look",
-      "costPerServing": 2.8,
-      "totalCost": 42,
-      "servings": 15,
-      "prepTime": "25 minutes",
-      "difficulty": "Easy",
-      "dietaryTags": [
-        "vegetarian-option-available"
-      ],
-      "ingredients": [
-        "hot dogs",
-        "crescent rolls",
-        "cheddar cheese",
-        "black olives"
-      ],
-      "notes": "Can be prepared ahead and reheated; highly Instagram-worthy"
-    },
-    {
-      "name": "Witch Hat Chocolate Treats",
-      "description": "Hershey's Kisses glued to chocolate wafer cookies with chocolate frosting and gold star candies on top, creating adorable witch hats",
-      "costPerServing": 1.95,
-      "totalCost": 29.25,
-      "servings": 15,
-      "prepTime": "20 minutes",
-      "difficulty": "Easy",
+      "name": "Artisan Pumpkin Bisque with Crispy Sage & Charred Ghost Garnish",
+      "description": "Hand-crafted roasted pumpkin bisque infused with nutmeg and thyme, finished with crème fraîche swirl and delicate ghost-shaped crouton cutouts. Served in premium ceramic demitasse cups with artisan sage oil drizzle.",
+      "costPerServing": 4.25,
+      "totalCost": 318.75,
+      "servings": 75,
+      "prepMethod": "Prepared fresh or purchased from premium local caterer",
       "dietaryTags": [
         "vegetarian",
-        "gluten-free-option"
+        "gluten-free option available"
       ],
-      "ingredients": [
-        "Hershey's Kisses",
-        "chocolate wafer cookies",
-        "chocolate frosting",
-        "gold star candies"
-      ],
-      "notes": "Perfect for dessert or party favors; requires minimal cooking skills"
+      "themeAlignment": "Traditional pumpkin imagery with sophisticated plating"
     },
     {
-      "name": "Pumpkin Cheese Ball with Crackers",
-      "description": "Orange-tinted cream cheese and cheddar blend shaped into a pumpkin with a pretzel stem and chive details, served with assorted crackers",
-      "costPerServing": 3.2,
-      "totalCost": 48,
-      "servings": 15,
-      "prepTime": "30 minutes plus chilling",
-      "difficulty": "Easy",
+      "name": "Smoked Gouda & Caramelized Onion Witch Hat Tartlets",
+      "description": "Hand-formed phyllo tartlets shaped like witch hats, filled with aged smoked Gouda, slow-caramelized pearl onions, and fresh thyme. Topped with crispy sage leaf and edible gold dust for premium presentation.",
+      "costPerServing": 5.75,
+      "totalCost": 431.25,
+      "servings": 75,
+      "prepMethod": "Artisan preparation or premium catering service",
       "dietaryTags": [
         "vegetarian",
-        "gluten-free-crackers-available"
+        "contains gluten"
       ],
-      "ingredients": [
-        "cream cheese",
-        "sharp cheddar",
-        "orange food coloring",
-        "pretzel rods",
-        "chives",
-        "crackers"
-      ],
-      "notes": "Can be made 1-2 days ahead; classic Halloween color scheme"
+      "themeAlignment": "Witch hat silhouette with elegant flavor profile"
     },
     {
-      "name": "Ghost Deviled Eggs with Peppercorn Eyes",
-      "description": "Traditional deviled eggs decorated to look like friendly ghosts with black peppercorn or olive eyes and a simple ghost face design",
-      "costPerServing": 2.4,
-      "totalCost": 36,
-      "servings": 15,
-      "prepTime": "35 minutes",
-      "difficulty": "Easy",
+      "name": "Charcoal-Activated Squid Ink Pasta with Ghost-Shaped Mozzarella",
+      "description": "Premium artisanal squid ink fettuccine tossed with garlic-infused olive oil, finished with hand-molded ghost-shaped burrata pearls, microgreens, and aged balsamic reduction.",
+      "costPerServing": 6.5,
+      "totalCost": 487.5,
+      "servings": 75,
+      "prepMethod": "Prepared fresh or premium catering",
+      "dietaryTags": [
+        "vegetarian",
+        "contains shellfish"
+      ],
+      "themeAlignment": "Dark spooky aesthetic with sophisticated Italian execution"
+    },
+    {
+      "name": "Bone Marrow Roasted Root Vegetable Skewers with Herb Oil",
+      "description": "Artisan-sourced bone marrow with roasted heirloom carrots, parsnips, and beets arranged on premium bamboo skewers. Finished with house-made herb oil and fleur de sel. Presented on dark slate platters.",
+      "costPerServing": 5.5,
+      "totalCost": 412.5,
+      "servings": 75,
+      "prepMethod": "Fresh preparation or premium catering",
+      "dietaryTags": [
+        "gluten-free",
+        "paleo-friendly"
+      ],
+      "themeAlignment": "Spooky bone motif with elegant rustic presentation"
+    },
+    {
+      "name": "Dark Chocolate & Pomegranate Haunted Mousse Cups with Edible Insects",
+      "description": "Premium 72% dark chocolate mousse layered with pomegranate reduction, served in hand-crafted dark ceramic cups. Garnished with edible gold, pomegranate arils, and artisan-quality edible insects for theatrical effect.",
+      "costPerServing": 4.85,
+      "totalCost": 363.75,
+      "servings": 75,
+      "prepMethod": "Artisan pastry preparation or premium dessert catering",
       "dietaryTags": [
         "vegetarian",
         "gluten-free"
       ],
-      "ingredients": [
-        "eggs",
-        "mayo",
-        "mustard",
-        "paprika",
-        "black peppercorns",
-        "olives"
-      ],
-      "notes": "Protein-rich option; can be prepared several hours ahead"
+      "themeAlignment": "Dark, mysterious aesthetic with premium presentation"
     },
     {
-      "name": "Black Cat Pretzel Snack Mix",
-      "description": "Black-tinted pretzel mix with chocolate chips, black licorice, and candy eyes scattered throughout in a cauldron-style serving bowl",
-      "costPerServing": 1.65,
-      "totalCost": 24.75,
-      "servings": 15,
-      "prepTime": "15 minutes",
-      "difficulty": "Very Easy",
+      "name": "Spiced Apple Cider Reduction with Cinnamon Stick Wand Stirrers",
+      "description": "Artisan-crafted mulled apple cider infused with star anise, cloves, and cardamom. Served in premium glassware with hand-tied cinnamon stick wands and dried apple slice garnishes for witchy atmosphere.",
+      "costPerServing": 2.8,
+      "totalCost": 210,
+      "servings": 75,
+      "prepMethod": "Fresh preparation or premium beverage service",
       "dietaryTags": [
         "vegetarian",
-        "gluten-free-option"
+        "vegan",
+        "gluten-free"
       ],
-      "ingredients": [
-        "pretzels",
-        "black food coloring",
-        "chocolate chips",
-        "black licorice",
-        "candy eyes"
-      ],
-      "notes": "Budget-friendly; requires no cooking; great for continuous snacking throughout party"
-    },
-    {
-      "name": "Spooky Spider Web Dip Platter",
-      "description": "Black bean dip base with sour cream piped in web patterns, topped with a candy spider, surrounded by orange and black tortilla chips",
-      "costPerServing": 2.5,
-      "totalCost": 37.5,
-      "servings": 15,
-      "prepTime": "20 minutes",
-      "difficulty": "Easy",
-      "dietaryTags": [
-        "vegetarian",
-        "gluten-free-chips-available"
-      ],
-      "ingredients": [
-        "black beans",
-        "sour cream",
-        "salsa",
-        "tortilla chips",
-        "candy spider"
-      ],
-      "notes": "Visually striking; can be assembled 2 hours before serving; crowd-pleaser"
+      "themeAlignment": "Witch's potion aesthetic with warm spiced flavors"
     }
   ],
   "decorations": [
     {
-      "name": "Giant Inflatable Pumpkins & Ghost Display",
-      "description": "6-8 foot tall inflatable pumpkins and ghosts strategically placed around venue entrance and corners. Creates immediate visual impact with classic Halloween imagery. Mix of orange pumpkins and white ghosts with purple LED lighting underneath.",
-      "estimatedCost": 180,
-      "quantity": 5,
-      "sourceMethod": "Purchase from party supply retailers or Amazon",
-      "themeAlignment": "Core classic Halloween elements",
-      "visualImpact": "Extremely high - visible from distance"
+      "name": "Halloween String Lights",
+      "description": "Orange and purple LED string lights",
+      "estimatedCost": 25,
+      "confidence": 0.9,
+      "quantity": 3
     },
     {
-      "name": "Witch Hat & Broomstick Pathway Markers",
-      "description": "Oversized witch hats (2-3 feet) mounted on poles with accompanying broomsticks lining the pathway to venue. Paint hats in black and purple, add orange accents. DIY-friendly with foam or cardboard bases.",
-      "estimatedCost": 120,
-      "quantity": 12,
-      "sourceMethod": "DIY with craft supplies or purchase pre-made decorative hats",
-      "themeAlignment": "Directly supports witch theme element",
-      "visualImpact": "High - creates immersive walkway experience"
-    },
-    {
-      "name": "Illuminated Pumpkin Patch Installation",
-      "description": "Cluster of 30-40 real and foam pumpkins in varying sizes arranged in designated area. Add purple and orange string lights woven through arrangement. Carve select pumpkins with LED candles inside for glowing effect.",
-      "estimatedCost": 250,
-      "quantity": 40,
-      "sourceMethod": "Mix of real pumpkins from local farms/stores and craft foam pumpkins",
-      "themeAlignment": "Quintessential Halloween centerpiece",
-      "visualImpact": "Very high - focal point of outdoor space"
-    },
-    {
-      "name": "Hanging Ghost Canopy with Purple Netting",
-      "description": "White cheesecloth ghosts suspended from overhead structures (trees, tent poles) with purple tulle netting creating layered canopy effect. Add battery-operated purple LED string lights throughout. Creates atmospheric ceiling treatment.",
-      "estimatedCost": 160,
-      "quantity": 20,
-      "sourceMethod": "DIY with cheesecloth, tulle fabric, and LED lights from craft stores",
-      "themeAlignment": "Ethereal ghost element with color coordination",
-      "visualImpact": "High - transforms overhead space dramatically"
-    },
-    {
-      "name": "Witch Silhouette & Cauldron Scene Backdrop",
-      "description": "Large black plywood cutouts of witches on broomsticks and cauldrons (4-6 feet tall) positioned against fence or wall. Paint with glow-in-dark paint and backlight with orange/purple spotlights. Photo opportunity area.",
-      "estimatedCost": 140,
-      "quantity": 3,
-      "sourceMethod": "DIY with plywood, paint, and power tools or commission local artist",
-      "themeAlignment": "Strong witch theme representation",
-      "visualImpact": "High - interactive photo backdrop element"
-    },
-    {
-      "name": "Ground-Level Fog Effect with Colored Uplighting",
-      "description": "Fog machine creating low-lying mist throughout venue with strategically placed orange and purple LED uplights. Creates eerie, atmospheric ground-level effect that enhances spooky ambiance without overwhelming guests.",
-      "estimatedCost": 150,
-      "quantity": 1,
-      "sourceMethod": "Rent fog machine from party rental company; purchase LED uplights",
-      "themeAlignment": "Enhances overall spooky atmosphere",
-      "visualImpact": "Very high - transforms entire venue ambiance",
-      "notes": "Requires power source; ensure guest safety and visibility"
+      "name": "Pumpkin Centerpieces",
+      "description": "Carved pumpkins for table centerpieces",
+      "estimatedCost": 30,
+      "confidence": 0.85,
+      "quantity": 5
     }
   ],
   "playlist": {
@@ -217,8 +131,8 @@
     "durationMinutes": 120
   },
   "contact": {
-    "invitationTemplate": "🎃 You're Invited to a Spooktacular Halloween Party! 🎃\n\nDate: 2025-10-31\nGuests: 15 friends\nTheme: [To be announced after theme selection]\n\nJoin us for an unforgettable Halloween celebration filled with:\n✨ Delicious themed food and drinks\n🎨 Spooky decorations\n🎵 Curated Halloween music\n👻 Great company and Halloween spirit\n\nPlease RSVP by [DATE] so we can plan accordingly.\n\n\nCan't wait to celebrate with you!",
-    "rsvpMethod": "email",
+    "invitationTemplate": "🎃 You're Invited to a Spooktacular Halloween Party! 🎃\n\nDate: 2025-10-31\nGuests: 75 friends\nTheme: [To be announced after theme selection]\n\nJoin us for an unforgettable Halloween celebration filled with:\n✨ Delicious themed food and drinks\n🎨 Spooky decorations\n🎵 Curated Halloween music\n👻 Great company and Halloween spirit\n\nPlease RSVP by [DATE] so we can plan accordingly.\n\n\nCan't wait to celebrate with you!",
+    "rsvpMethod": "online-form",
     "sendTimelineDays": 14,
     "reminderSchedule": [
       7,
@@ -228,115 +142,83 @@
   },
   "purchaseList": [
     {
-      "name": "Mummy Hot Dogs with Cheese Bandages",
+      "name": "Artisan Pumpkin Bisque with Crispy Sage & Charred Ghost Garnish",
       "category": "food",
-      "quantity": 15,
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 4.25,
+      "source": "grocery store"
+    },
+    {
+      "name": "Smoked Gouda & Caramelized Onion Witch Hat Tartlets",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 5.75,
+      "source": "grocery store"
+    },
+    {
+      "name": "Charcoal-Activated Squid Ink Pasta with Ghost-Shaped Mozzarella",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 6.5,
+      "source": "grocery store"
+    },
+    {
+      "name": "Bone Marrow Roasted Root Vegetable Skewers with Herb Oil",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 5.5,
+      "source": "grocery store"
+    },
+    {
+      "name": "Dark Chocolate & Pomegranate Haunted Mousse Cups with Edible Insects",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 4.85,
+      "source": "grocery store"
+    },
+    {
+      "name": "Spiced Apple Cider Reduction with Cinnamon Stick Wand Stirrers",
+      "category": "food",
+      "quantity": 75,
       "unit": "servings",
       "estimatedPrice": 2.8,
       "source": "grocery store"
     },
     {
-      "name": "Witch Hat Chocolate Treats",
-      "category": "food",
-      "quantity": 15,
-      "unit": "servings",
-      "estimatedPrice": 1.95,
-      "source": "grocery store"
-    },
-    {
-      "name": "Pumpkin Cheese Ball with Crackers",
-      "category": "food",
-      "quantity": 15,
-      "unit": "servings",
-      "estimatedPrice": 3.2,
-      "source": "grocery store"
-    },
-    {
-      "name": "Ghost Deviled Eggs with Peppercorn Eyes",
-      "category": "food",
-      "quantity": 15,
-      "unit": "servings",
-      "estimatedPrice": 2.4,
-      "source": "grocery store"
-    },
-    {
-      "name": "Black Cat Pretzel Snack Mix",
-      "category": "food",
-      "quantity": 15,
-      "unit": "servings",
-      "estimatedPrice": 1.65,
-      "source": "grocery store"
-    },
-    {
-      "name": "Spooky Spider Web Dip Platter",
-      "category": "food",
-      "quantity": 15,
-      "unit": "servings",
-      "estimatedPrice": 2.5,
-      "source": "grocery store"
-    },
-    {
-      "name": "Giant Inflatable Pumpkins & Ghost Display",
-      "category": "decoration",
-      "quantity": 5,
-      "unit": "each",
-      "estimatedPrice": 180,
-      "source": "party supply store"
-    },
-    {
-      "name": "Witch Hat & Broomstick Pathway Markers",
-      "category": "decoration",
-      "quantity": 12,
-      "unit": "each",
-      "estimatedPrice": 120,
-      "source": "party supply store"
-    },
-    {
-      "name": "Illuminated Pumpkin Patch Installation",
-      "category": "decoration",
-      "quantity": 40,
-      "unit": "each",
-      "estimatedPrice": 250,
-      "source": "party supply store"
-    },
-    {
-      "name": "Hanging Ghost Canopy with Purple Netting",
-      "category": "decoration",
-      "quantity": 20,
-      "unit": "each",
-      "estimatedPrice": 160,
-      "source": "party supply store"
-    },
-    {
-      "name": "Witch Silhouette & Cauldron Scene Backdrop",
+      "name": "Halloween String Lights",
       "category": "decoration",
       "quantity": 3,
       "unit": "each",
-      "estimatedPrice": 140,
+      "estimatedPrice": 25,
       "source": "party supply store"
     },
     {
-      "name": "Ground-Level Fog Effect with Colored Uplighting",
+      "name": "Pumpkin Centerpieces",
       "category": "decoration",
-      "quantity": 1,
+      "quantity": 5,
       "unit": "each",
-      "estimatedPrice": 150,
+      "estimatedPrice": 30,
       "source": "party supply store"
     }
   ],
   "budget": {
     "totalBudget": 1000,
-    "food": 217.5,
-    "decorations": 1000,
+    "food": 2223.75,
+    "decorations": 55,
     "entertainment": 0,
-    "supplies": 30,
-    "estimatedTotal": 1247.5,
-    "remaining": -247.5,
+    "supplies": 150,
+    "estimatedTotal": 2428.75,
+    "remaining": -1428.75,
     "withinBudget": false
   },
   "metadata": {
-    "createdAt": "2025-10-31T13:27:14.331Z",
-    "planningDurationMs": 23374,
+    "createdAt": "2025-10-31T13:35:20.785Z",
+    "planningDurationMs": 27803,
     "messageCount": 7,
     "consensusAchieved": true
   }

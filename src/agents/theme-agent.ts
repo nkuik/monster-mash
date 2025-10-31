@@ -48,45 +48,53 @@ export class ThemeAgent implements Agent {
     );
 
     // Call LLM with fallback
-    const fallback: VerbalizeSamplingOutput<Theme> = {
-      options: [
-        {
-          description: "Classic Spooky Halloween",
+    // WHY: Randomize fallback order to prevent first-option bias
+    const fallbackOptions = [
+      {
+        description: "Classic Spooky Halloween",
+        confidence: 0.9,
+        data: {
+          name: "Classic Spooky Halloween",
+          description:
+            "Traditional Halloween atmosphere with pumpkins, ghosts, and witches",
           confidence: 0.9,
-          data: {
-            name: "Classic Spooky Halloween",
-            description:
-              "Traditional Halloween atmosphere with pumpkins, ghosts, and witches",
-            confidence: 0.9,
-            colors: ["orange", "black", "purple"],
-            mood: ["spooky", "fun", "traditional"],
-          },
+          colors: ["orange", "black", "purple"],
+          mood: ["spooky", "fun", "traditional"],
         },
-        {
-          description: "Elegant Masquerade Ball",
+      },
+      {
+        description: "Elegant Masquerade Ball",
+        confidence: 0.8,
+        data: {
+          name: "Elegant Masquerade Ball",
+          description:
+            "Sophisticated Halloween evening with mystery and elegance",
           confidence: 0.8,
-          data: {
-            name: "Elegant Masquerade Ball",
-            description:
-              "Sophisticated Halloween evening with mystery and elegance",
-            confidence: 0.8,
-            colors: ["black", "gold", "burgundy"],
-            mood: ["elegant", "mysterious", "sophisticated"],
-          },
+          colors: ["black", "gold", "burgundy"],
+          mood: ["elegant", "mysterious", "sophisticated"],
         },
-        {
-          description: "Playful Monster Bash",
+      },
+      {
+        description: "Playful Monster Bash",
+        confidence: 0.75,
+        data: {
+          name: "Playful Monster Bash",
+          description:
+            "Fun and friendly Halloween with cartoon monsters and bright colors",
           confidence: 0.75,
-          data: {
-            name: "Playful Monster Bash",
-            description:
-              "Fun and friendly Halloween with cartoon monsters and bright colors",
-            confidence: 0.75,
-            colors: ["green", "purple", "orange"],
-            mood: ["playful", "fun", "lighthearted"],
-          },
+          colors: ["green", "purple", "orange"],
+          mood: ["playful", "fun", "lighthearted"],
         },
-      ],
+      },
+    ];
+
+    // Shuffle options to prevent deterministic first-option bias
+    const shuffledOptions = [...fallbackOptions].sort(
+      () => Math.random() - 0.5
+    );
+
+    const fallback: VerbalizeSamplingOutput<Theme> = {
+      options: shuffledOptions,
     };
 
     const response = await this.client.generateWithFallback<
@@ -101,6 +109,20 @@ export class ThemeAgent implements Agent {
       },
       fallback
     );
+
+    // Log LLM success/failure for observability
+    if (response.source === "fallback") {
+      console.log(
+        `⚠️  ThemeAgent: LLM failed, using fallback templates (${response.latencyMs}ms)`
+      );
+      if (response.error) {
+        console.log(`   Error: ${response.error}`);
+      }
+    } else {
+      console.log(
+        `✅ ThemeAgent: LLM generated themes successfully (${response.latencyMs}ms)`
+      );
+    }
 
     // Convert to Decision array
     if (!response.success || !response.data) {

@@ -77,6 +77,17 @@ export class FoodAgent implements Agent {
       fallback
     );
 
+    // Log LLM success/failure for observability
+    if (response.source === "fallback") {
+      console.log(
+        `⚠️  FoodAgent: LLM failed, using fallback templates (${response.latencyMs}ms)`
+      );
+    } else {
+      console.log(
+        `✅ FoodAgent: LLM generated menu successfully (${response.latencyMs}ms)`
+      );
+    }
+
     if (!response.success || !response.data) {
       return fallback.options.map((opt) => ({
         agentId: this.id,

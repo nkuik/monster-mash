@@ -157,6 +157,7 @@ export class AnthropicClient {
       data: fallback,
       latencyMs: response.latencyMs,
       source: "fallback",
+      error: response.error, // Pass through error for logging
     };
   }
 

@@ -6,7 +6,7 @@
  * Validated through Spike 1-3 patterns.
  */
 
-import type { Agent, Vote } from "../types/agent";
+import type { Agent, Decision, Vote } from "../types/agent";
 import type { PartyConstraints, PartyPlan, Theme } from "../types/party";
 import { MessageBus } from "./message-bus";
 import { createVote, tallyVotes } from "./voting";
@@ -148,18 +148,32 @@ export class Coordinator {
     const decisions = await themeAgent.decide(constraints);
     const options = Array.isArray(decisions) ? decisions : [decisions];
 
+    console.log(`\n🎭 Theme options generated (${options.length} options):`);
+    options.forEach((opt, i) => {
+      console.log(
+        `  ${i + 1}. ${opt.description} (confidence: ${opt.confidence})`
+      );
+    });
+
     // Collect votes from all agents
+    // WHY: Each agent evaluates options based on their personality and role
+    // This creates actual deliberation rather than deterministic selection
     const votes: Vote[] = [];
     for (const [agentId, agent] of this.agents.entries()) {
-      // Each agent votes for preferred theme
-      // For simplicity, agents vote for highest confidence option
-      // In full implementation, agents could have own voting logic
-      const preferred = options[0]; // Simple: pick first/highest confidence
+      const preferred = this.selectThemeByPersonality(
+        options,
+        constraints.personality || "balanced",
+        agentId
+      );
       votes.push(createVote(agentId, preferred.description));
+      console.log(`  🗳️  ${agentId} votes for: ${preferred.description}`);
     }
 
     // Tally votes and select winner
     const consensus = tallyVotes(votes);
+    console.log(
+      `\n✅ Consensus reached: "${consensus.winner}" (${consensus.votes} votes)\n`
+    );
     const winningOption = options.find(
       (o) => o.description === consensus.winner
     );
@@ -312,6 +326,101 @@ export class Coordinator {
    */
   getAgentIds(): string[] {
     return Array.from(this.agents.keys());
+  }
+
+  /**
+   * Select theme option based on personality and agent role
+   *
+   * WHY: FR-051 to FR-053 require personality-driven voting behavior
+   * This creates actual deliberation and diversity in outcomes
+   *
+   * @param options Available theme options to choose from
+   * @param personality Global personality influencing all agents
+   * @param agentId ID of the agent making the selection
+   * @returns Selected theme option based on personality + role
+   */
+  private selectThemeByPersonality(
+    options: Decision[],
+    personality: string,
+    agentId: string
+  ): Decision {
+    // WHY: Different agents have different priorities based on their role
+    // This ensures voting is not deterministic and reflects agent personalities
+
+    // Map personality to preferences
+    const personalityBias: Record<
+      string,
+      { preferHighConfidence: boolean; preferComplex: boolean }
+    > = {
+      frugal: { preferHighConfidence: true, preferComplex: false },
+      perfectionist: { preferHighConfidence: true, preferComplex: true },
+      adventurous: { preferHighConfidence: false, preferComplex: true },
+    };
+
+    const bias = personalityBias[personality] || {
+      preferHighConfidence: false,
+      preferComplex: false,
+    };
+
+    // WHY: Add role-based voting behavior to create agent diversity
+    // Each agent type cares about different aspects of the theme
+    const agentPreferences: Record<string, (opt: Decision) => number> = {
+      theme: (opt) => opt.confidence, // Theme agent trusts their own confidence
+      food: (opt) => {
+        // Food agent prefers themes that mention food/dining
+        const desc = opt.description.toLowerCase();
+        return desc.includes("feast") || desc.includes("dinner") ? 0.2 : 0;
+      },
+      decor: (opt) => {
+        // Decor agent prefers visually rich themes
+        const desc = opt.description.toLowerCase();
+        return desc.includes("elegant") || desc.includes("gothic") ? 0.2 : 0;
+      },
+      dj: (opt) => {
+        // DJ agent prefers themes with strong music associations
+        const desc = opt.description.toLowerCase();
+        return desc.includes("dance") || desc.includes("disco") ? 0.2 : 0;
+      },
+      purchase: (opt) => {
+        // Purchase agent prefers simpler, budget-friendly themes
+        const desc = opt.description.toLowerCase();
+        return desc.includes("classic") ? 0.2 : -0.1;
+      },
+      contact: (opt) => {
+        // Contact agent prefers inclusive, accessible themes
+        const desc = opt.description.toLowerCase();
+        return desc.includes("family") ? 0.2 : 0;
+      },
+    };
+
+    // Calculate weighted scores for each option
+    const scoredOptions = options.map((opt) => {
+      let score = 0;
+
+      // Personality influence on confidence preference
+      if (bias.preferHighConfidence) {
+        score += opt.confidence;
+      } else {
+        // Adventurous prefers lower confidence (more risky)
+        score += 1 - opt.confidence;
+      }
+
+      // Agent role-specific preference
+      const agentPref = agentPreferences[agentId];
+      if (agentPref) {
+        score += agentPref(opt);
+      }
+
+      // Add randomness to prevent completely deterministic behavior
+      // WHY: Even with personality, we want some variation between runs
+      score += Math.random() * 0.3;
+
+      return { option: opt, score };
+    });
+
+    // Sort by score and select highest
+    scoredOptions.sort((a, b) => b.score - a.score);
+    return scoredOptions[0].option;
   }
 
   /**

@@ -17,13 +17,23 @@ export function stripMarkdownCodeFences(text: string): string {
   // Remove ```json ... ``` or ``` ... ``` wrappers
   let cleaned = text.trim();
 
-  // Pattern 1: ```json\n{...}\n```
-  if (cleaned.startsWith("```json") && cleaned.endsWith("```")) {
-    cleaned = cleaned.slice(7, -3).trim();
+  // Pattern 1: ```json\n{...}\n``` (with or without newline)
+  if (cleaned.startsWith("```json")) {
+    // Remove ```json (and optional newline) from start
+    cleaned = cleaned.replace(/^```json\s*/, "");
+    // Remove ``` from end
+    if (cleaned.endsWith("```")) {
+      cleaned = cleaned.slice(0, -3).trim();
+    }
   }
   // Pattern 2: ```\n{...}\n```
-  else if (cleaned.startsWith("```") && cleaned.endsWith("```")) {
-    cleaned = cleaned.slice(3, -3).trim();
+  else if (cleaned.startsWith("```")) {
+    // Remove ``` (and optional newline) from start
+    cleaned = cleaned.replace(/^```\s*/, "");
+    // Remove ``` from end
+    if (cleaned.endsWith("```")) {
+      cleaned = cleaned.slice(0, -3).trim();
+    }
   }
 
   return cleaned;
