@@ -210,6 +210,7 @@ A user wants Purchaser agent to research actual prices for decorations, food ing
 - **FR-053**: Personality conflicts MUST create observable engaging dynamics rather than opaque black-box decision-making
 - **FR-053a**: Personality traits MUST be implemented as LLM system prompt modifiers that shape generated content while coordination logic remains rule-based
 - **FR-053b**: Personality system prompts MUST explicitly instruct agents to generate multiple options (minimum 3) with confidence scores (0-1 scale) as part of their core behavior, embedding verbalized sampling into personality expression
+- **FR-053c**: All agent system prompts MUST explicitly instruct the LLM to return ONLY valid JSON with no markdown code fences (no `json` wrappers) and no additional explanatory text to ensure reliable parsing
 
 ### Key Entities
 
@@ -286,6 +287,7 @@ A user wants Purchaser agent to research actual prices for decorations, food ing
 - Q: What retry and cost control strategy should be used for LLM API calls? → A: Conservative retry - Retry once on failure, abort if still failing, log for manual review
 - Q: How should personality system prompts incorporate verbalized sampling behavior? → A: Embed verbalized sampling instructions in each personality system prompt (generate multiple options with confidence scores as part of personality behavior)
 - Q: Should Monster Mash support external agent integration via A2A protocol, or is this a closed internal swarm? → A: Closed internal swarm - All 6 agents are internal TypeScript classes using simple message passing (validated by Spike 1-3). No A2A protocol (JSON-RPC 2.0, AgentCards, HTTP servers) implementation required. "A2A" refers to conceptual agent-to-agent collaboration pattern, not the A2A protocol standard.
+- Q: Should LLM outputs include markdown code fences or additional text? → A: No - All agent system prompts must explicitly instruct LLMs to return ONLY valid JSON with no markdown code fences (no `json` wrappers) and no additional explanatory text. This prevents parsing failures (observed in Spike 2 before implementing stripMarkdownCodeFences workaround).
 
 ```
 

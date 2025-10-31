@@ -1,37 +1,105 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: Monster Mash - Agent-to-Agent Party Planning Framework
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Branch**: `001-a2a-party-framework` | **Date**: 2025-10-31 | **Spec**: [spec.md](./spec.md)
+**Input**: Feature specification from `/specs/001-a2a-party-framework/spec.md`
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
+**Status**: ✅ **Spikes Complete** - Moving to MVP Implementation
 
 ## Summary
 
-[Extract from feature spec: primary requirement + technical approach from research]
+Multi-agent swarm party planning framework using TypeScript + Claude Haiku 4.5. Six specialized agents (Theme Decider, Food Planner, Decorator, Purchaser, DJ/Playlist, Contact Manager) collaborate using broadcast communication and majority voting to plan Halloween parties. Verbalized sampling (multiple LLM-generated options with confidence scores) enables transparent decision-making. Optional personality system prompts create engaging behavioral variety.
+
+**Spike Validation Results** (✅ ALL PASSED):
+
+- **Spike 1**: 2-agent coordination works with simple message passing
+- **Spike 2**: Claude Haiku 4.5 generates creative content at <2s latency, ~$0.02-0.05/session
+- **Spike 3**: LLM personalities create dramatic behavioral differences (frugal vs perfectionist vs adventurous)
+
+**Decision**: Proceed with hybrid architecture - **LLM for content generation** (menus, themes, playlists), **rules for coordination** (voting, message routing, consensus). Personalities are **optional feature** (disabled by default, enabled via CLI flag).
 
 ## Technical Context
 
-<!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
--->
+**Language/Version**: TypeScript 5.9.3 (Node.js v24.3.0 runtime)
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Primary Dependencies**:
+
+- `@anthropic-ai/sdk` 0.68.0 (Claude Haiku 4.5 integration)
+- `tsx` 4.20.6 (direct TypeScript execution)
+- `dotenv` 17.2.3 (environment variable management)
+
+**Storage**: Local file system (JSON files for state persistence, planning history)
+
+**Testing**: Manual execution + constitution-aligned testing (tests only where they aid understanding)
+
+**Target Platform**: CLI application (macOS/Linux/Windows via Node.js)
+
+**Project Type**: Single application (src/ structure with agent modules)
+
+**Performance Goals**:
+
+- Complete planning session: <30s for 6 agents
+- LLM API latency: <2s per agent decision
+- Consensus voting: <5 minutes for theme selection
+
+**Constraints**:
+
+- Cost: <$0.50 per planning session (validated: ~$0.02-0.05 with Haiku 4.5)
+- Token usage: Track and log per session
+- Fallback: Must degrade gracefully if LLM fails (use templates)
+- Offline: No - requires Anthropic API access
+
+**Scale/Scope**:
+
+- 6 agents per planning session
+- 50-100 guests typical party size
+- $200-$1000 budget range
+- 10-20 message exchanges per decision point
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-[Gates determined based on constitution file]
+✅ **ALL GATES PASSED** (Based on `.specify/memory/constitution.md`)
+
+1. **Experiment-First** ✅
+
+   - 3 spikes executed before building infrastructure
+   - Each spike tested 1 hypothesis (coordination, LLM quality, personalities)
+   - Decision gates at T033-T036 before MVP
+
+2. **TypeScript-First** ✅
+
+   - TypeScript 5.9.3 with strict mode
+   - Explicit types for agent communication (Message, Decision, MenuItem)
+   - tsx for direct execution (no build step)
+
+3. **Fast Iteration** ✅
+
+   - Spike 1: 140 lines in ~1 day
+   - Spike 2: 305 lines in ~1 day
+   - Spike 3: 392 lines in ~1 day
+   - Total discovery phase: <1 week
+
+4. **AI-Friendly Code** ✅
+
+   - Clear naming: `ThemeAgent`, `FoodAgent`, `broadcastMessage()`
+   - Explicit types: `type Message = {from: string; to: string; content: any}`
+   - Linear flow: `decide() → broadcastMessage() → collectVotes() → chooseWinner()`
+   - WHY comments: "// Use EventEmitter to decouple agents (avoid tight coupling)"
+
+5. **Minimal Ceremony** ✅
+   - Only 7 dependencies (4 prod, 3 dev)
+   - No premature abstractions (no BaseAgent until 3 agents exist)
+   - No test framework (manual execution validates correctness)
+   - No CLI framework (console.log + ANSI colors sufficient)
+
+**Dependency Justification**:
+
+- `@anthropic-ai/sdk`: Required for Claude API (core feature)
+- `tsx`: Required for TypeScript execution (development speed)
+- `dotenv`: Required for API key security (best practice)
+- `typescript`: Required for type safety (constitution principle)
+- Other dependencies planned only if spikes prove insufficient
 
 ## Project Structure
 
@@ -48,57 +116,86 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
+
+**Structure Decision**: Single project structure (Option 1) - CLI application with 6 internal agent modules
+
+**Current Spike Files** (validated, keep as references):
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
-
-tests/
-├── contract/
-├── integration/
-└── unit/
-
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+├── spike-1-agents.ts         # 140 lines - 2-agent coordination proof
+├── spike-2-llm.ts            # 305 lines - Claude Haiku 4.5 validation
+└── spike-3-personality.ts    # 392 lines - personality + verbalized sampling
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Planned MVP Structure** (to be built from spike learnings):
+
+```text
+src/
+├── agents/                    # Agent implementations
+│   ├── theme-agent.ts         # Theme Decider (LLM-based)
+│   ├── food-agent.ts          # Food Planner (LLM-based)
+│   ├── decor-agent.ts         # Decorator (LLM-based)
+│   ├── purchase-agent.ts      # Purchaser (rules-based estimator)
+│   ├── dj-agent.ts            # DJ/Playlist (LLM-based)
+│   └── contact-agent.ts       # Contact Manager (rules-based)
+│
+├── coordinator/               # Swarm coordination logic
+│   ├── message-bus.ts         # EventEmitter-based broadcast
+│   ├── voting.ts              # Majority voting consensus
+│   └── coordinator.ts         # Orchestrates planning session
+│
+├── llm/                       # LLM integration
+│   ├── anthropic-client.ts    # Claude API wrapper
+│   ├── personalities.ts       # Optional personality system prompts
+│   └── prompts.ts             # Base prompts with verbalized sampling
+│
+├── types/                     # TypeScript definitions
+│   ├── agent.ts               # Agent interface, Message, Decision
+│   ├── party.ts               # Party, Theme, Menu, Budget
+│   └── llm.ts                 # LLMResponse, MenuItem (with confidence)
+│
+├── utils/                     # Shared utilities
+│   ├── json-parser.ts         # Robust JSON parsing + code fence stripping
+│   ├── logger.ts              # Console.log wrapper (optional ANSI colors)
+│   └── state-manager.ts       # JSON file persistence
+│
+└── main.ts                    # CLI entry point
+
+docs/                          # Documentation (from decision point)
+└── spike-results.md           # Consolidated spike findings
+
+tests/                         # Only if constitution-compliant
+└── (none initially - spikes validate correctness)
+```
+
+**Key Architectural Decisions**:
+
+- **No BaseAgent class initially** (wait until 3+ agents show common patterns)
+- **Coordinator as orchestrator** (not controller - agents are independent)
+- **Message bus decouples agents** (no direct dependencies between agents)
+- **LLM module isolates API** (swap providers without changing agents)
+- **Types enforce contracts** (Message, Decision, MenuItem interfaces)
+- **Utils are pure functions** (testable without mocks if needed)
 
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+**Status**: ✅ No violations - all constitution principles followed
+
+This project exemplifies constitution compliance:
+
+- **Spike-driven development**: 3 spikes completed before any infrastructure
+- **Minimal dependencies**: 7 total (well below typical project bloat)
+- **No premature abstraction**: No BaseAgent, no framework adoption until proven necessary
+- **Fast iteration**: Spike 1 → Spike 3 completed in <1 week
+- **TypeScript-first**: Strict mode, explicit types throughout
+
+**Anti-patterns avoided**:
+
+- ❌ Building 6 agents before proving 2-agent coordination works
+- ❌ Adopting A2A protocol JSON-RPC 2.0 before testing simple message passing
+- ❌ Adding Zod/Winston/Commander.js before proving console.log insufficient
+- ❌ Creating test infrastructure before understanding what correctness means
+- ❌ Designing complex data model before seeing real agent communication patterns

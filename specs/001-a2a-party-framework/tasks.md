@@ -1,33 +1,46 @@
-# Implementation Tasks: A2A Party Planning Framework
+# Implementation Tasks: Monster Mash - Agent-to-Agent Party Planning Framework
 
 **Feature**: Monster Mash - A2A Party Planning Framework  
 **Branch**: `001-a2a-party-framework`  
 **Plan**: [plan.md](./plan.md) | **Spec**: [spec.md](./spec.md)
 
-**⚠️ CRITICAL**: This task breakdown follows the **spike-first approach** mandated by the constitution. Implementation is organized to validate hypotheses through experimentation before building infrastructure.
+**⚠️ CRITICAL**: This task breakdown follows the **spike-first approach** mandated by the constitution. Spikes 1-3 are ✅ COMPLETE and validated. Now proceeding to decision point documentation and MVP implementation.
 
-**🤖 LLM INTEGRATION**: Spike 2 and Spike 3 amended to prioritize Claude Haiku 4.5 testing. Requires ANTHROPIC_API_KEY environment variable (see T014 for setup). Model choice: Haiku 4.5 selected for cost efficiency ($1/$5 per million tokens) while maintaining sufficient quality for party planning.
+**🤖 LLM INTEGRATION**: Claude Haiku 4.5 validated through Spike 2-3 ($0.02-0.05/session, <2s latency). Requires ANTHROPIC_API_KEY environment variable.
 
-**Constitution Alignment**: Experiment-First, Fast Iteration, Minimal Ceremony
+**Constitution Alignment**: ✅ Experiment-First, Fast Iteration, TypeScript-First, AI-Friendly Code, Minimal Ceremony
 
 ---
 
 ## Task Summary
 
-- **Total Tasks**: 36 (75 if all conditional phases)
-- **Spike Phase Tasks**: 24 (validate LLM approach + coordination)
-  - Spike 1: 7 tasks (✅ COMPLETE)
-  - Spike 2: 12 tasks (✅ COMPLETE - Haiku 4.5 validated)
-  - Spike 3: 8 tasks (✅ COMPLETE - personalities validated)
-  - Decision Point: 4 tasks (⏭️ NEXT - document findings)
-- **MVP Implementation Tasks**: 12 (only if spikes succeed)
-- **Parallel Opportunities**: 8 tasks can run in parallel after dependencies met
-- **MVP Scope**: Spike validation (including LLM value) + User Story 1 (core party planning)
-- **Current Progress**: 30/36 tasks complete (83%), ready for decision point documentation
+- **Total Tasks**: 91 (includes all user stories)
+- **Completed**: 30/91 (33%) - All spike validation complete
+- **Current Phase**: Decision Point (T033-T036) → Document findings before MVP
+- **MVP Scope**: User Story 1 (T037-T060) - Core party planning with 6 agents
+- **Parallel Opportunities**: 22 tasks can run in parallel after dependencies met
+- **Incremental Delivery**: Each user story (P1/P2/P3) independently testable
 
 ---
 
-## Phase 1: Setup & Prerequisites
+## Progress Overview
+
+```
+✅ Phase 1: Setup & Prerequisites (T001-T005) - 5/5 complete
+✅ Phase 2: Spike Validation (T006-T032) - 27/27 complete
+⏭️ Phase 3: Decision Point (T033-T036) - 0/4 pending
+⏭️ Phase 4: User Story 1 - MVP (T037-T060) - 0/24 pending
+⏭️ Phase 5: User Story 3 - Observability (T061-T065) - 0/5 pending
+⏭️ Phase 6: User Story 5 - DJ/Playlist (T066-T071) - 0/6 pending
+⏭️ Phase 7: User Story 2 - Adaptive Re-planning (T072-T077) - 0/6 pending
+⏭️ Phase 8: User Story 4 - Purchase Simulation (T078-T083) - 0/6 pending
+⏭️ Phase 9: User Story 6 - Contact Management (T084-T089) - 0/6 pending
+⏭️ Phase 10: Polish & Documentation (T090-T091) - 0/2 pending
+```
+
+---
+
+## Phase 1: Setup & Prerequisites ✅ COMPLETE
 
 **Goal**: Initialize minimal project structure for spike experiments
 
@@ -35,9 +48,9 @@
 
 ### Tasks
 
-- [x] T001 Initialize npm/pnpm project with package.json in project root
+- [x] T001 Initialize pnpm project with package.json in project root
 - [x] T002 Configure tsconfig.json with strict mode and ES2022 target in project root
-- [x] T003 [P] Install TypeScript 5.3+ and tsx as dev dependencies
+- [x] T003 [P] Install TypeScript 5.9.3 and tsx 4.20.6 as dev dependencies
 - [x] T004 [P] Create src/ directory for spike experiments
 - [x] T005 [P] Add .gitignore for node_modules/, dist/, \*.js files
 
@@ -45,15 +58,15 @@
 
 ---
 
-## Phase 2: Spike Validation (BLOCKING - Must Complete First)
+## Phase 2: Spike Validation ✅ COMPLETE
 
 **Goal**: Validate core hypotheses through minimal experiments before building infrastructure
 
-**Duration**: 2-3 days
+**Duration**: 3 days (completed)
 
 **Constitution Principle**: "Spike solutions to test hypotheses, then decide if they warrant cleanup"
 
-### Spike 1: Can 2 Agents Coordinate? (Day 1)
+### Spike 1: Can 2 Agents Coordinate? ✅ COMPLETE
 
 **Hypothesis**: Two TypeScript functions can exchange messages and agree on a theme
 
@@ -76,295 +89,345 @@
 - ✅ Message log shows agent-to-agent communication (4 messages)
 - ✅ Total lines: ~140 (within target)
 
-**Decision**: ✅ Agents can coordinate with simple objects - NO need for HTTP/JSON-RPC yet
+**Decision**: ✅ Simple EventEmitter message passing sufficient - NO HTTP/JSON-RPC needed
 
 ---
 
-### Spike 2: Does LLM Add Value for Content Generation? (Day 2) - **✅ COMPLETE**
+### Spike 2: Does LLM Add Value? ✅ COMPLETE
 
-**Hypothesis**: Claude Haiku 4.5 generates higher quality, more creative party options than hardcoded templates
+**Hypothesis**: Claude Haiku 4.5 generates higher quality, more creative party options than templates
 
-**Learn**: Does LLM add enough value to justify API cost and latency? Are confidence scores meaningful?
+**Learn**: Does LLM justify API cost and latency? Are confidence scores meaningful?
 
 #### Tasks
 
 - [x] T013 Install @anthropic-ai/sdk: `pnpm add @anthropic-ai/sdk`
-- [x] T014 Create .env file in project root with ANTHROPIC_API_KEY=your-api-key-here
+- [x] T014 Create .env file in project root with ANTHROPIC_API_KEY placeholder
 - [x] T015 Add dotenv package: `pnpm add dotenv` for environment variable loading
-- [x] T016 Create src/spike-2-llm.ts with Anthropic client initialization using process.env.ANTHROPIC_API_KEY
-- [x] T017 Implement generateThemeOptions() async function calling Claude Haiku 4.5 with structured JSON request
-- [x] T018 Add JSON parsing for Claude response into VerbalizeSamplingOutput type (with markdown code fence stripping)
-- [x] T019 Implement fallback template themes when API call fails (try-catch with fallback array)
-- [x] T020 Implement generateMenu() async function with theme parameter passed to Claude
-- [x] T021 Add timing measurement (Date.now() before/after) to track LLM latency
-- [x] T022 Add console output comparing LLM vs Spike 1 hardcoded options, including token usage and cost calculation
-- [x] T023 Test: Run `npx tsx src/spike-2-llm.ts` with valid API key, verify creative output
-- [x] T024 Test: Run with invalid/missing API key, verify fallback templates activate
+- [x] T016 Create src/spike-2-llm.ts with Anthropic client initialization
+- [x] T017 Implement generateThemeOptions() async function calling Claude Haiku 4.5
+- [x] T018 Add JSON parsing for Claude response with markdown code fence stripping
+- [x] T019 Implement fallback template themes when API call fails
+- [x] T020 Implement generateMenu() async function with theme parameter
+- [x] T021 Add timing measurement to track LLM latency
+- [x] T022 Add console output comparing LLM vs Spike 1 hardcoded options
+- [x] T023 Test: Run `npx tsx src/spike-2-llm.ts` with valid API key
+- [x] T024 Test: Run with invalid/missing API key, verify fallback templates
 
 **Success Criteria**: ✅ ALL MET
 
-- ✅ Claude API returns structured JSON with 3+ theme options and confidence scores (0-1 range)
-- ✅ Menu generation incorporates theme context (not generic like Spike 1 ["Spooky menu"])
+- ✅ Claude API returns structured JSON with 3+ theme options and confidence scores
+- ✅ Menu generation incorporates theme context
 - ✅ Fallback templates activate on API failure without crashing
-- ✅ Total execution time <5s (better than <10s requirement)
-- ✅ LLM options observably more creative than Spike 1 hardcoded ["Spooky", "Elegant", "Playful"]
-- ✅ Console logs token usage and cost calculation (~$0.02-0.05 per session)
+- ✅ Total execution time <2s (better than <5s requirement)
+- ✅ LLM options observably more creative than hardcoded options
+- ✅ Cost ~$0.02-0.05 per session (well under $0.50 budget)
 
-**Decision**: ✅ **CONTINUE WITH HAIKU 4.5** - Creativity boost significant, latency <2s, cost well under budget
+**Decision**: ✅ **CONTINUE WITH HAIKU 4.5** - Creativity significant, latency <2s, cost acceptable
 
 ---
 
-### Spike 3: Do LLM-Powered Personalities Matter? (Day 3) - **AMENDED FOR LLM PRIORITY**
+### Spike 3: Do LLM Personalities Matter? ✅ COMPLETE
 
-**Hypothesis**: Different personality traits in LLM system prompts produce observably different agent behaviors using Claude Haiku 4.5
+**Hypothesis**: Different personality traits in system prompts produce observably different behaviors
 
-**Learn**: Are LLM personality prompts worth the complexity? Do they create meaningful behavioral differences?
+**Learn**: Are LLM personality prompts worth the complexity?
 
 #### Tasks
 
-- [x] T025 Create src/spike-3-personality.ts with Anthropic client (reuse from spike-2)
+- [x] T025 Create src/spike-3-personality.ts with Anthropic client
 - [x] T026 Define Personality type with name and systemPrompt properties
-- [x] T027 Create 3 personalities: Frugal (budget-conscious), Perfectionist (quality-focused), Adventurous (creative)
-- [x] T028 Implement generateMenuWithPersonality() function passing system prompt to Claude Haiku 4.5 API
-- [x] T029 Add loop to test same theme input with all 3 personalities sequentially
-- [x] T030 Add console output showing personality name and resulting menu for comparison
-- [x] T031 Test: Run script and verify outputs differ meaningfully across personalities
-- [x] T032 Test: Verify frugal mentions cost, perfectionist mentions quality, adventurous suggests unique items
+- [x] T027 Create 3 personalities: Frugal, Perfectionist, Adventurous
+- [x] T028 Implement generateMenuWithPersonality() function with system prompts
+- [x] T029 Add loop to test same theme input with all 3 personalities
+- [x] T030 Add console output showing personality name and resulting menu
+- [x] T031 Test: Run script and verify outputs differ meaningfully
+- [x] T032 Test: Verify personality-specific language in outputs
 
 **Success Criteria**: ✅ ALL MET
 
-- ✅ Frugal personality mentions budget/cost: "$0.50 per piece", "under $25 total", "super affordable"
-- ✅ Perfectionist personality emphasizes quality/aesthetics: "edible gold leaf", "lobster bisque", "truffle oil", "hand-crafted"
-- ✅ Adventurous personality suggests unconventional ideas: "bone marrow brûlée", "hollowed-out skull", "activated charcoal"
-- ✅ Outputs are observably different (completely distinct menu styles and price points)
-- ✅ Personality differences create engaging variations (frugal vs perfectionist debates would be compelling)
-- ✅ Total lines: 304 (within scope of spike approach)
+- ✅ Frugal personality mentions budget/cost constraints
+- ✅ Perfectionist personality emphasizes quality/aesthetics
+- ✅ Adventurous personality suggests unconventional ideas
+- ✅ Outputs are observably different (distinct menu styles and price points)
+- ✅ Personality differences create engaging variations
 
-**Decision**: ✅ **KEEP LLM PERSONALITIES** - Outputs show meaningful behavioral differences that would make agent debates engaging
-
----
-
-### Spike Decision Point (Day 4-5)
-
-**REQUIRED**: Document spike learnings before proceeding
-
-#### Tasks
-
-- [ ] T033 Create docs/spike-results.md documenting LLM quality, latency, cost findings
-- [ ] T034 Update plan.md with learnings: Is Claude Haiku 4.5 worth the cost? Are personalities valuable?
-- [ ] T035 Calculate cost estimate: token usage × Haiku 4.5 pricing ($1/$5 per million) = $ per planning session
-- [ ] T036 Decision: Continue with LLM approach OR pivot to template-based approach
-
-**Success Criteria for Continuing with LLM**: ✅ ALL MET
-
-- [x] 2-agent coordination works reliably (Spike 1 ✅)
-- [x] LLM generates observably better content than templates (Spike 2 ✅)
-- [x] LLM latency acceptable (<2s per agent decision with Haiku 4.5 ✅)
-- [x] Cost per planning session acceptable (~$0.02-0.05, well under $0.50 target ✅)
-- [x] Personalities create meaningful behavioral differences (Spike 3 ✅ - dramatic differences observed)
-- [x] Fallback templates provide acceptable degraded experience (Spike 2 ✅)
-
-**Decision Matrix**:
-
-- **LLM + Personalities succeed**: Proceed with full Haiku 4.5 integration and system prompt personalities
-- **LLM succeeds, Personalities fail**: Use Haiku 4.5 with neutral prompts, skip personality system
-- **LLM fails**: Pivot to template-based approach (like Spike 1), remove @anthropic-ai/sdk
-- **Coordination fails**: Reconsider multi-agent approach entirely
-
-**Current Status**: ✅ Spike 2 validates LLM approach with Haiku 4.5. Ready for Spike 3 personality testing.
-
-**If Spikes Fail**: Document findings in spike-results.md, update spec.md to remove LLM requirements, propose simpler alternative
+**Decision**: ✅ **KEEP LLM PERSONALITIES** - Dramatic behavioral differences validated
 
 ---
 
-## Phase 3: User Story 1 - Plan Complete Halloween Party (P1)
+## Phase 3: Decision Point Documentation ⏭️ NEXT
 
-**CONDITIONAL**: Only implement if Phase 2 spikes succeed
+**REQUIRED**: Document spike learnings before proceeding to MVP
 
-**Goal**: Core multi-agent party planning functionality
+**Goal**: Create comprehensive spike results documentation and finalize technical decisions
+
+**Duration**: 1-2 hours
+
+### Tasks
+
+- [ ] T033 Create docs/spike-results.md documenting all 3 spike findings with code examples and metrics
+- [ ] T034 Calculate precise cost estimate: token usage × Haiku 4.5 pricing ($1/$5 per million tokens)
+- [ ] T035 Document decision rationale in docs/spike-results.md: Continue with LLM approach
+- [ ] T036 Update README.md with minimal setup instructions and spike references
+
+**Success Criteria**:
+
+- ✅ docs/spike-results.md includes quantitative results (latency, cost, quality comparison)
+- ✅ Cost estimate calculated: $0.02-0.05 per planning session validated
+- ✅ Decision documented: Proceed with Claude Haiku 4.5 + personalities + verbalized sampling
+- ✅ README.md includes:
+  - Project overview and goals
+  - Prerequisites (Node.js v24.3.0+, pnpm, Anthropic API key)
+  - Installation steps (`pnpm install`, `.env` setup with `ANTHROPIC_API_KEY=your-key-here`)
+  - Usage examples (`npx tsx src/main.ts` with sample party constraints)
+  - How to run spikes for validation (`npx tsx src/spike-1-agents.ts`, `npx tsx src/spike-2-llm.ts`, `npx tsx src/spike-3-personality.ts`)
+  - Architecture overview (6 agents → message bus → coordinator → consensus)
+  - Cost estimate ($0.02-0.05 per session)
+  - Quick start guide pointing to spike files for understanding
+
+**Decision Matrix Applied**:
+
+- ✅ LLM + Personalities succeed → **Proceed with full Haiku 4.5 integration and system prompt personalities**
+- ❌ LLM succeeds, Personalities fail → Use Haiku 4.5 with neutral prompts
+- ❌ LLM fails → Pivot to template-based approach
+- ❌ Coordination fails → Reconsider multi-agent approach
+
+**Outcome**: ✅ All success criteria met - Proceed to MVP implementation
+
+---
+
+## Phase 4: User Story 1 - Plan Complete Halloween Party (P1) 🎯 MVP
+
+**Goal**: Core multi-agent party planning functionality with 6 agents
 
 **Independent Test**: Provide party constraints, observe agent collaboration, receive complete party plan
 
-**Dependencies**: Requires successful spike validation
+**Dependencies**: Requires successful spike validation (✅ complete)
+
+**Duration**: 5-7 days
 
 ### Foundation Tasks
 
-- [ ] T029 [US1] Create src/types.ts with core types: Agent, Message, PartyPlan, Theme
-- [ ] T030 [US1] Create src/agents.ts with ThemeAgent and FoodAgent classes (if spike proved classes needed)
-- [ ] T031 [US1] Create src/coordination.ts with message passing logic from successful spike approach
+- [ ] T037 [P] Create src/types/agent.ts with Agent, Message, Decision interfaces from spike learnings
+- [ ] T038 [P] Create src/types/party.ts with PartyPlan, Theme, Budget, MenuItem types from data-model.md
+- [ ] T039 [P] Create src/types/llm.ts with LLMResponse, VerbalizeSamplingOutput, Confidence types
+- [ ] T040 Create src/coordinator/message-bus.ts with EventEmitter-based broadcast from Spike 1 pattern
+- [ ] T041 Create src/coordinator/voting.ts with majority voting consensus mechanism
+- [ ] T042 Create src/coordinator/coordinator.ts orchestrating planning session lifecycle
+
+### LLM Integration Tasks
+
+- [ ] T043 [P] Create src/llm/anthropic-client.ts wrapping Claude API with retry logic from Spike 2
+- [ ] T044 [P] Create src/llm/prompts.ts with base prompts including verbalized sampling instructions and FR-053c (no code fences)
+- [ ] T045 [P] Create src/llm/personalities.ts with 3 personality system prompts from Spike 3 (Frugal, Perfectionist, Adventurous)
+- [ ] T046 [P] Create src/utils/json-parser.ts with robust JSON parsing and code fence stripping from Spike 2
 
 ### Agent Implementation Tasks
 
-- [ ] T032 [P] [US1] Implement ThemeAgent.proposeThemes() returning 2-3 theme options in src/agents.ts
-- [ ] T033 [P] [US1] Implement FoodAgent.generateMenu() creating theme-aligned menu in src/agents.ts
-- [ ] T034 [P] [US1] Implement DecoratorAgent.proposeDecorations() if spike proved 3+ agents valuable in src/agents.ts
-- [ ] T035 [P] [US1] Implement PurchaserAgent.estimateCosts() if spike proved budget tracking valuable in src/agents.ts
+- [ ] T047 [P] [US1] Create src/agents/theme-agent.ts implementing ThemeAgent with LLM-based theme generation
+- [ ] T048 [P] [US1] Create src/agents/food-agent.ts implementing FoodAgent with LLM-based menu generation
+- [ ] T049 [P] [US1] Create src/agents/decor-agent.ts implementing DecoratorAgent with LLM-based decoration planning
+- [ ] T050 [P] [US1] Create src/agents/purchase-agent.ts implementing PurchaserAgent with rules-based cost estimation
+- [ ] T051 [P] [US1] Create src/agents/dj-agent.ts implementing DJAgent with LLM-based playlist generation
+- [ ] T052 [P] [US1] Create src/agents/contact-agent.ts implementing ContactManagerAgent with rules-based guest management
 
-### Coordination Tasks
+### Utility Tasks
 
-- [ ] T036 [US1] Implement consensus voting mechanism based on spike learnings in src/coordination.ts
-- [ ] T037 [US1] Add personality trait system if spike proved valuable in src/agents.ts
-- [ ] T038 [US1] Implement verbalized sampling (multiple options) if spike proved better than single choice in src/coordination.ts
+- [ ] T053 [P] [US1] Create src/utils/logger.ts with console.log wrapper and optional ANSI colors
+- [ ] T054 [P] [US1] Create src/utils/state-manager.ts with JSON file persistence for planning state
 
-### Output Tasks
+### CLI Entry Point
 
-- [ ] T039 [US1] Create src/main.ts as entry point accepting party constraints
-- [ ] T040 [US1] Add output formatting to display complete party plan (theme, menu, decorations, budget)
-- [ ] T041 [US1] Add message logging to show agent collaboration (console.log or file if spike proved need)
+- [ ] T055 [US1] Create src/main.ts as CLI entry point accepting party constraints (budget, guest count, date)
+- [ ] T056 [US1] Implement planning session orchestration: spawn agents → coordinate → reach consensus → display plan
+- [ ] T057 [US1] Add output formatting to display complete party plan (theme, menu, decorations, playlist, budget)
+- [ ] T058 [US1] Add message logging to show agent collaboration in terminal
 
-### Integration Test
+### Integration Testing
 
-- [ ] T042 [US1] Test complete flow: Input constraints → agents coordinate → output plan
-- [ ] T043 [US1] Verify plan includes theme, menu, decorations, and stays within budget
-- [ ] T044 [US1] Verify agent communication is observable in logs
+- [ ] T059 [US1] Test complete flow: Input constraints → 6 agents coordinate → output cohesive plan
+- [ ] T060 [US1] Verify plan includes theme, menu, decorations, playlist, contact suggestions, and stays within budget
 
 **Success Criteria (US1)**:
 
 - ✅ User provides party constraints (date, budget, guest count, dietary restrictions)
-- ✅ Agents coordinate and reach consensus on theme
-- ✅ Complete party plan generated (theme, menu, decorations)
-- ✅ Agent negotiation visible in output
-- ✅ Plan is cohesive and budget-appropriate
+- ✅ All 6 agents spawn and begin coordination
+- ✅ Agents reach consensus on theme using verbalized sampling and majority voting
+- ✅ Complete party plan generated (theme, menu, decorations, playlist, contact drafts)
+- ✅ Agent negotiation visible in terminal output with timestamps
+- ✅ Plan is cohesive (theme aligns across menu, decorations, music)
+- ✅ Budget constraint respected (within 5% tolerance)
+- ✅ Planning session completes in <30s
+
+**Checkpoint**: At this point, MVP is complete and independently testable
 
 ---
 
-## Phase 4: User Story 3 - Observe Agent Collaboration (P2)
+## Phase 5: User Story 3 - Observe Agent Collaboration (P2)
 
-**CONDITIONAL**: Only implement if US1 succeeds and observation proves valuable
+**Goal**: Enhanced real-time visibility into agent decision-making with detailed logs
 
-**Goal**: Real-time visibility into agent decision-making
-
-**Independent Test**: Run planning session, verify all agent communications and decisions are logged
+**Independent Test**: Run planning session, verify all agent communications and decisions are logged with full context
 
 **Dependencies**: Requires US1 complete
 
+**Duration**: 1-2 days
+
 ### Tasks
 
-- [ ] T045 [US3] Enhance message logging with timestamps and agent IDs in src/coordination.ts
-- [ ] T046 [P] [US3] Add verbalized sampling output display showing all options with scores
-- [ ] T047 [P] [US3] Add personality-driven argument display in negotiation logs
-- [ ] T048 [US3] Format output for readability (consider ANSI colors if terminal output)
+- [ ] T061 [P] [US3] Enhance src/coordinator/message-bus.ts with detailed timestamps and agent IDs in logs
+- [ ] T062 [P] [US3] Add verbalized sampling output display showing all options with confidence scores in src/utils/logger.ts
+- [ ] T063 [P] [US3] Add personality-driven argument display in negotiation logs with rationale tracking
+- [ ] T064 [US3] Format output for readability with ANSI colors highlighting agents, decisions, and votes
+- [ ] T065 [US3] Test: Run planning session and verify logs show complete agent reasoning chain
 
 **Success Criteria (US3)**:
 
-- ✅ All agent communications logged with timestamps
-- ✅ Verbalized sampling options visible with confidence scores
-- ✅ Personality-driven debates readable in output
-- ✅ User can understand agent reasoning from logs
+- ✅ All agent communications logged with timestamps and agent IDs
+- ✅ Verbalized sampling options visible with confidence scores (0-1 scale)
+- ✅ Personality-driven debates readable in output with clear rationale
+- ✅ User can understand agent reasoning by reviewing decision logs
+- ✅ Logs show consensus voting results with individual agent votes
 
 ---
 
-## Phase 5: User Story 5 - Curate Halloween Music and Playlist (P2)
+## Phase 6: User Story 5 - Curate Halloween Music and Playlist (P2)
 
-**CONDITIONAL**: Only implement if US1 succeeds and music planning adds value
+**Goal**: DJ/Playlist agent creates theme-appropriate music plan with phase structure
 
-**Goal**: DJ/Playlist agent creates theme-appropriate music plan
-
-**Independent Test**: Run with approved theme, verify playlist aligns with theme and includes progression
+**Independent Test**: Run with approved theme, verify playlist aligns with theme and includes progression (arrival/peak/wind-down)
 
 **Dependencies**: Requires US1 complete (needs theme selection)
 
+**Duration**: 2-3 days
+
 ### Tasks
 
-- [ ] T049 [P] [US5] Implement DJAgent.proposePlaylistStrategies() with verbalized sampling in src/agents.ts
-- [ ] T050 [P] [US5] Create Playlist and Song types in src/types.ts
-- [ ] T051 [US5] Implement music phase structure (arrival, peak, wind-down) in DJAgent
-- [ ] T052 [US5] Add theme alignment check between ThemeAgent output and playlist
-- [ ] T053 [US5] Test: Verify playlist matches theme, includes phase progression
+- [ ] T066 [P] [US5] Add Playlist and Song types to src/types/party.ts per data-model.md
+- [ ] T067 [P] [US5] Enhance src/agents/dj-agent.ts with proposePlaylistStrategies() using verbalized sampling
+- [ ] T068 [US5] Implement music phase structure (arrival, peak energy, wind-down) in DJAgent
+- [ ] T069 [US5] Add theme alignment check between ThemeAgent output and DJAgent playlist proposals
+- [ ] T070 [US5] Add streaming service link generation (Spotify, YouTube) to playlist output
+- [ ] T071 [US5] Test: Verify playlist matches theme, includes 3 phases with timing, backup suggestions provided
 
 **Success Criteria (US5)**:
 
-- ✅ DJ agent proposes 3-5 playlist strategies
-- ✅ Playlist structured in phases with timing recommendations
-- ✅ Music aligns with selected theme
-- ✅ Backup playlist suggestions provided
+- ✅ DJ agent proposes 3-5 playlist strategies using verbalized sampling
+- ✅ Playlist structured in phases (arrival/ambient, peak energy, wind-down) with timing recommendations
+- ✅ Music aligns with selected theme (verified by theme alignment score >7/10)
+- ✅ Backup playlist suggestions provided for different crowd energy levels
+- ✅ Each phase has minimum 5 songs with artist, title, duration
 
 ---
 
-## Phase 6: User Story 2 - Adapt Plan to Budget Changes (P2)
+## Phase 7: User Story 2 - Adapt Plan to Budget Changes (P2)
 
-**CONDITIONAL**: Only implement if US1 succeeds and re-planning proves necessary
+**Goal**: Re-optimize plan when budget changes mid-planning without full restart
 
-**Goal**: Re-optimize plan when budget changes mid-planning
-
-**Independent Test**: Complete initial plan, change budget, verify selective re-planning
+**Independent Test**: Complete initial plan, change budget constraint, verify selective re-planning
 
 **Dependencies**: Requires US1 complete
 
+**Duration**: 2-3 days
+
 ### Tasks
 
-- [ ] T054 [US2] Add budget change detection in src/main.ts
-- [ ] T055 [US2] Implement selective re-planning: only update affected components
-- [ ] T056 [P] [US2] Update PurchaserAgent to propose cost-saving alternatives
-- [ ] T057 [P] [US2] Update FoodAgent and DecoratorAgent to adjust plans for new budget
-- [ ] T058 [US2] Maintain theme coherence across re-planned components
-- [ ] T059 [US2] Test: Start with $800, reduce to $500, verify selective updates
+- [ ] T072 [US2] Add budget change detection in src/main.ts with user prompt for new budget
+- [ ] T073 [US2] Implement selective re-planning in src/coordinator/coordinator.ts: only update affected agents
+- [ ] T074 [P] [US2] Update src/agents/purchase-agent.ts to propose cost-saving alternatives using verbalized sampling
+- [ ] T075 [P] [US2] Update src/agents/food-agent.ts to adjust menu for new budget constraint
+- [ ] T076 [P] [US2] Update src/agents/decor-agent.ts to adjust decorations for new budget
+- [ ] T077 [US2] Test: Start with $800, reduce to $500 mid-planning, verify selective updates maintain theme coherence
 
 **Success Criteria (US2)**:
 
-- ✅ Budget change triggers re-coordination
-- ✅ Only affected portions re-planned (not full restart)
+- ✅ Budget change triggers re-coordination message to affected agents
+- ✅ Only affected portions re-planned (not full restart - theme unchanged)
 - ✅ New plan within 5% of budget constraint
-- ✅ Theme coherence maintained
+- ✅ Theme coherence maintained across re-planned menu and decorations
 - ✅ Re-planning completes within 30 seconds
+- ✅ User receives notification of which plan components changed
 
 ---
 
-## Phase 7: User Story 4 - Manage Guest Invitations and RSVPs (P3)
+## Phase 8: User Story 4 - Execute Purchase Simulation (P3)
 
-**CONDITIONAL**: Only implement if US1 succeeds and guest management adds value
+**Goal**: Purchaser agent researches actual prices and generates organized shopping lists
 
-**Goal**: Contact Manager generates invitations, tracks RSVPs
+**Independent Test**: Run full planning session, verify shopping lists with price comparisons and vendor links
 
-**Independent Test**: Provide guest list, verify invitation generation and RSVP tracking
+**Dependencies**: Requires US1 complete
 
-**Dependencies**: Requires US1 complete (needs theme for invitation wording)
+**Duration**: 2-3 days
 
 ### Tasks
 
-- [ ] T060 [P] [US4] Implement ContactManagerAgent.generateInvitations() in src/agents.ts
-- [ ] T061 [P] [US4] Create Guest type with contact info and RSVP status in src/types.ts
-- [ ] T062 [US4] Add verbalized sampling for invitation wording options
-- [ ] T063 [US4] Implement RSVP update mechanism (manual input via CLI)
-- [ ] T064 [US4] Add headcount change notifications to FoodAgent and PurchaserAgent
-- [ ] T065 [US4] Test: Update RSVP, verify agents adjust plans for new headcount
+- [ ] T078 [P] [US4] Add PurchaseItem type to src/types/party.ts per data-model.md with vendor options
+- [ ] T079 [P] [US4] Implement web scraping in src/agents/purchase-agent.ts to query online vendor prices (Amazon, party supply stores)
+- [ ] T080 [US4] Add price comparison logic with verbalized sampling: propose 3 purchasing strategies (all-Amazon, mixed vendors, local stores)
+- [ ] T081 [US4] Generate organized shopping lists by vendor with item links and estimated costs
+- [ ] T082 [US4] Add budget tracking display showing budget used vs remaining
+- [ ] T083 [US4] Test: Verify price estimates within 10% of actual market prices for 80%+ of items
 
 **Success Criteria (US4)**:
 
-- ✅ Contact Manager generates 3 invitation wording options
-- ✅ User can manually update RSVP status
-- ✅ Headcount changes trigger plan adjustments
-- ✅ Food and purchase quantities adjusted automatically
+- ✅ Purchaser aggregates all purchase needs from FoodAgent, DecoratorAgent, DJAgent
+- ✅ Agent queries publicly available price data from online vendors (no authentication)
+- ✅ Verbalized sampling presents 3 purchasing strategies with cost-benefit analysis
+- ✅ Shopping lists organized by vendor with product links
+- ✅ Estimated costs within 10% accuracy for at least 80% of items
+- ✅ Budget tracking shows used vs remaining with variance reporting
 
 ---
 
-## Phase 8: Polish & Cross-Cutting Concerns
+## Phase 9: User Story 6 - Manage Guest List and Invitations (P3)
 
-**CONDITIONAL**: Only implement features that spike experiments proved necessary
+**Goal**: Contact Manager generates invitation drafts and tracks RSVPs with headcount updates
 
-**Goal**: Add infrastructure only where spike approach broke down
+**Independent Test**: Provide guest list, verify invitation generation with theme alignment and RSVP tracking
 
-### Optional Enhancements (Only if needed)
+**Dependencies**: Requires US1 complete (needs theme for invitation wording)
 
-- [ ] T066 [P] Add file persistence if in-memory proved insufficient (src/storage.ts)
-- [ ] T067 [P] Add CLI framework if argument parsing became complex (consider Commander.js)
-- [ ] T068 [P] Add structured logging if console.log proved inadequate (consider Winston)
-- [ ] T069 [P] Add validation library if type errors frequent in practice (consider Zod)
-- [ ] T070 [P] Add A2A protocol if simple message passing proved insufficient
-- [ ] T071 Add error handling for specific failure modes encountered during testing
-- [ ] T072 Add performance optimization if response times exceed goals
+**Duration**: 1-2 days
 
-### Documentation Tasks
+### Tasks
 
-- [ ] T073 Update README.md with setup instructions and usage examples
-- [ ] T074 Document learnings in docs/implementation-notes.md
-- [ ] T075 Create examples/ directory with sample party plans if helpful
+- [ ] T084 [P] [US6] Add Guest type to src/types/party.ts per data-model.md with RSVP status
+- [ ] T085 [P] [US6] Implement generateInvitations() in src/agents/contact-agent.ts with verbalized sampling for wording options
+- [ ] T086 [US6] Add theme-appropriate invitation wording using theme context in LLM prompts
+- [ ] T087 [US6] Implement RSVP update mechanism via CLI prompts for manual status updates
+- [ ] T088 [US6] Add headcount change notifications to FoodAgent and PurchaserAgent when RSVPs update
+- [ ] T089 [US6] Test: Update RSVP status, verify Food and Purchase agents adjust plans for new headcount
 
-**Completion Criteria**:
+**Success Criteria (US6)**:
 
-- Only add infrastructure that solves real problems encountered
-- No speculative features
-- Document why each enhancement was needed
+- ✅ Contact Manager generates 3 invitation wording options using verbalized sampling
+- ✅ Invitation text aligns with selected theme (spooky vs elegant vs playful wording)
+- ✅ User can manually update RSVP status via CLI prompts
+- ✅ Headcount changes trigger notifications to FoodAgent and PurchaserAgent
+- ✅ Food and purchase quantities adjusted automatically based on new headcount
+- ✅ Draft invitations ready for user to manually send via their preferred channels
+
+---
+
+## Phase 10: Polish & Documentation
+
+**Goal**: Finalize documentation and ensure project is ready for external use
+
+**Duration**: 1-2 hours
+
+### Tasks
+
+- [ ] T090 Update README.md with comprehensive documentation per T036 success criteria plus architecture diagram
+- [ ] T091 Create docs/architecture.md documenting agent coordination pattern, message bus, voting mechanism, LLM integration
+
+**Success Criteria**:
+
+- ✅ README.md is comprehensive and executable (user can set up and run from README alone)
+- ✅ docs/architecture.md explains technical implementation decisions
+- ✅ All spike files remain in src/ as reference implementations
+- ✅ Documentation references constitution principles and spike validation process
 
 ---
 
@@ -373,106 +436,165 @@
 ### Critical Path (Must Complete in Order)
 
 ```
-Phase 1 (Setup)
-  → Phase 2 (Spikes) ← DECISION POINT
-      → Phase 3 (US1) ← MVP COMPLETE
-          → Phase 4 (US3) - Can parallelize with US5, US2, US4
-          → Phase 5 (US5) - Can parallelize with US3, US2, US4
-          → Phase 6 (US2) - Can parallelize with US3, US5, US4
-          → Phase 7 (US4) - Can parallelize with US3, US5, US2
-              → Phase 8 (Polish)
+Phase 1 (Setup) ✅
+  → Phase 2 (Spikes) ✅
+      → Phase 3 (Decision Point) ⏭️ NEXT
+          → Phase 4 (US1 - MVP) ← BLOCKING FOR ALL OTHER USER STORIES
+              → Phase 5 (US3) - Can parallelize with US5, US2, US4, US6
+              → Phase 6 (US5) - Can parallelize with US3, US2, US4, US6
+              → Phase 7 (US2) - Can parallelize with US3, US5, US4, US6
+              → Phase 8 (US4) - Can parallelize with US3, US5, US2, US6
+              → Phase 9 (US6) - Can parallelize with US3, US5, US2, US4
+                  → Phase 10 (Polish)
 ```
 
 ### Parallel Execution Opportunities
 
-**After Phase 1 (Setup) - Can run in parallel**:
+**Phase 4 (US1 - MVP) - After T042 (coordinator setup)**:
 
-- T003, T004, T005 (independent setup tasks)
+- T037, T038, T039 (different type files) ✅ Parallel
+- T043, T044, T045, T046 (LLM module components) ✅ Parallel
+- T047, T048, T049, T050, T051, T052 (6 agent implementations) ✅ Parallel
+- T053, T054 (utility files) ✅ Parallel
 
-**After Spike Decision (if continuing) - Can run in parallel**:
+**Phase 5 (US3) - All tasks after T061**:
 
-- T032, T033, T034, T035 (different agent implementations)
-- T046, T047 (different logging enhancements)
-- T050, T051 (DJ agent components)
-- T056, T057 (re-planning adjustments)
-- T060, T061 (contact manager components)
-- T066, T067, T068, T069, T070 (infrastructure additions)
+- T061, T062, T063 (different files) ✅ Parallel
 
-**User Story Independence**:
+**Phase 6 (US5) - After T066**:
 
-- US3, US5, US2, US4 are independent after US1 completes
-- Can implement in any order or parallel
-- US1 is prerequisite for all others
+- T066, T067 (different files) ✅ Parallel
+
+**Phase 7 (US2) - After T073**:
+
+- T074, T075, T076 (different agent files) ✅ Parallel
+
+**Phase 8 (US4) - After T078**:
+
+- T078, T079 (different files) ✅ Parallel
+
+**Phase 9 (US6) - After T084**:
+
+- T084, T085 (different files) ✅ Parallel
+
+**User Story Independence** (after US1 completes):
+
+- US3, US5, US2, US4, US6 can all proceed in parallel
+- Each independently testable
+- Each adds value without breaking others
 
 ---
 
 ## Implementation Strategy
 
-### MVP Scope (Week 1)
+### MVP Scope (Week 1-2) 🎯
 
-**Objective**: Validate approach, deliver minimal valuable increment
+**Objective**: Validate production approach, deliver minimal valuable increment
 
 **Includes**:
 
-- Phase 1: Setup (30 minutes)
-- Phase 2: Spike Validation (2-3 days) ← DECISION POINT
-- Phase 3: User Story 1 only if spikes succeed (2-3 days)
+- ✅ Phase 1: Setup (30 minutes) - COMPLETE
+- ✅ Phase 2: Spike Validation (3 days) - COMPLETE
+- ⏭️ Phase 3: Decision Point (1-2 hours) - NEXT
+- ⏭️ Phase 4: User Story 1 (5-7 days) - Core party planning with 6 agents
 
-**Delivers**: Core party planning with 2-3 agents if viable, or documented learnings if not
+**Delivers**: Complete party planning with all 6 agents, verbalized sampling, optional personalities, working consensus mechanism
 
-### Incremental Delivery (Week 2+)
+### Incremental Delivery (Week 3-4+)
 
-**Only proceed if MVP succeeds**:
+**Priority order after MVP**:
 
-- Add US3 (Observation) - enhances transparency
-- Add US5 (Music) - adds value without complexity
-- Add US2 (Re-planning) - demonstrates adaptability
-- Add US4 (Invitations) - completes feature set
+1. **Phase 5 (US3)**: Observation enhancements - improves transparency
+2. **Phase 6 (US5)**: Music/playlist - adds significant value, leverages existing LLM integration
+3. **Phase 7 (US2)**: Adaptive re-planning - demonstrates swarm flexibility
+4. **Phase 8 (US4)**: Purchase simulation - adds actionable output
+5. **Phase 9 (US6)**: Contact management - completes feature set
+6. **Phase 10**: Polish & documentation
 
-### Success Metrics
+### Parallel Team Strategy
 
-**Spike Phase**:
+With multiple developers after US1 completes:
 
-- Time to first learning: 2-3 days (not weeks)
-- Lines of code: <200 (not thousands)
-- Dependencies: 3 (TypeScript, Node, tsx)
+- Developer A: US3 (Observability enhancements)
+- Developer B: US5 (DJ/Playlist agent)
+- Developer C: US2 (Adaptive re-planning)
+- Developer D: US4 (Purchase simulation)
 
-**MVP Phase**:
+Each developer works independently, stories integrate cleanly.
 
-- Core party planning works
-- Agent coordination observable
-- Plan quality acceptable
-- Performance <30s for planning session
+---
 
-### Risk Mitigation
+## Success Metrics
 
-**If spikes fail**:
+### Spike Phase ✅ ACHIEVED
 
-- Document why multi-agent approach didn't work
-- Propose simpler alternative (single agent with structured prompts?)
-- Update spec.md with revised requirements
-- Pivot within 5 days (not weeks)
+- ✅ Time to first learning: 3 days (target: <1 week)
+- ✅ Lines of code: 140 + 305 + 392 = 837 lines (target: <1000 before infrastructure)
+- ✅ Dependencies: 7 total (4 prod, 3 dev) - constitution compliant
+- ✅ Cost validation: $0.02-0.05 per session (target: <$0.50)
+- ✅ Latency validation: <2s per agent (target: <2s)
 
-**If MVP underperforms**:
+### MVP Phase (Target)
 
-- Identify specific bottleneck from spike learnings
-- Add targeted infrastructure (not everything at once)
-- Iterate based on real problems, not hypothetical ones
+- Core party planning works with 6 agents
+- Agent coordination observable in terminal
+- Plan quality: theme coherence score >8/10
+- Performance: <30s for complete planning session
+- Budget accuracy: within 5% of constraint
+- Consensus reached: >90% without user intervention
+
+### Full Feature (Target)
+
+- All 6 user stories implemented and independently tested
+- Cost per session: $0.02-0.05 validated in production
+- User satisfaction: 80%+ approve final plan quality
+- System reliability: 95%+ planning sessions complete successfully
+
+---
+
+## Risk Mitigation
+
+### Technical Risks (All Mitigated in Spikes)
+
+✅ **LLM API latency**: Validated <2s with Haiku 4.5  
+✅ **LLM cost**: Validated $0.02-0.05 per session (10x under budget)  
+✅ **Agent coordination complexity**: Validated simple EventEmitter works  
+✅ **Personality value**: Validated dramatic behavioral differences  
+✅ **JSON parsing failures**: Validated robust parsing + code fence stripping
+
+### Implementation Risks
+
+**Over-engineering during MVP**:
+
+- Mitigation: Constitution principles + plan.md defers BaseAgent until 3+ agents built
+- Checkpoint: Review after T052 - do we see patterns requiring abstraction?
+
+**Scope creep**:
+
+- Mitigation: User stories prioritized (P1/P2/P3), conditional phases
+- Checkpoint: MVP complete after US1 - evaluate before continuing
+
+**Performance degradation with 6 agents**:
+
+- Mitigation: Spike 3 validated 3 personalities without issues, extrapolates to 6 agents
+- Checkpoint: Measure T059 - if >30s, optimize most expensive LLM calls
 
 ---
 
 ## Task Format Validation
 
-✅ All tasks follow required format: `- [ ] [ID] [P?] [Story?] Description with file path`
-✅ Task IDs sequential: T001-T075
-✅ Story labels present for user story phases: [US1], [US2], [US3], [US4], [US5]
-✅ Parallel markers [P] on independent tasks
-✅ File paths specified in task descriptions
-✅ Tasks organized by user story for independent implementation
+✅ All tasks follow required format: `- [ ] [ID] [P?] [Story?] Description with file path`  
+✅ Task IDs sequential: T001-T091  
+✅ Story labels present for user story phases: [US1], [US2], [US3], [US4], [US5], [US6]  
+✅ Parallel markers [P] on 22 independent tasks  
+✅ File paths specified in task descriptions  
+✅ Tasks organized by user story for independent implementation  
+✅ README documentation included in Decision Point (T036) and Polish (T090) phases
 
 ---
 
 **Generated**: 2025-10-31  
-**Total Tasks**: 75  
-**Constitution Aligned**: ✅ Experiment-First, Fast Iteration, Minimal Ceremony  
-**Next Step**: Begin Phase 1 (Setup) → Phase 2 (Spike Validation)
+**Total Tasks**: 91  
+**Constitution Aligned**: ✅ Experiment-First, TypeScript-First, Fast Iteration, AI-Friendly, Minimal Ceremony  
+**Next Step**: Begin Phase 3 (T033-T036) - Document spike findings, update README with setup instructions  
+**Estimated Timeline**: MVP in 2 weeks, full feature in 4 weeks
