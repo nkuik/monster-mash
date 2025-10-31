@@ -1,0 +1,32 @@
+{
+  "name": "monster-mash",
+  "version": "0.1.0",
+  "description": "A2A Party Planning Framework - Experimental multi-agent coordination for Halloween party planning",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "dev": "tsx watch src/main.ts",
+    "spike-1": "tsx src/spike-1-agents.ts",
+    "spike-2": "tsx src/spike-2-llm.ts",
+    "spike-3": "tsx src/spike-3-personality.ts"
+  },
+  "keywords": [
+    "a2a",
+    "agents",
+    "party-planning",
+    "multi-agent",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.8.1",
+  "devDependencies": {
+    "@types/node": "^24.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
+    "dotenv": "^17.2.3"
+  }
+}

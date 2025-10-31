@@ -1,0 +1,651 @@
+# Data Model - A2A Party Planning Framework
+
+**Branch**: `001-a2a-party-framework` | **Date**: 2025-01-16
+**Phase**: 1 - Design
+
+## Overview
+
+This document defines the TypeScript data model for all 11 key entities identified in the feature specification. Each entity is represented as a TypeScript interface with validation rules and relationships.
+
+---
+
+## Core Entities
+
+### 1. PartyPlan (Aggregate Root)
+
+The central entity that aggregates all party planning data.
+
+```typescript
+interface PartyPlan {
+  id: string; // UUID
+  hostUserId: string; // User who initiated planning
+  createdAt: Date;
+  updatedAt: Date;
+  status: PartyPlanStatus;
+
+  // Planning metadata
+  targetDate: Date;
+  estimatedGuestCount: number;
+  budget?: {
+    total: number;
+    currency: string; // ISO 4217 code (e.g., "USD")
+  };
+
+  // Agent-generated components
+  theme: Theme | null;
+  guests: Guest[];
+  menu: MenuItem[];
+  decorations: DecorationItem[];
+  purchases: PurchaseItem[];
+  playlist: Playlist | null;
+
+  // Coordination metadata
+  planningSessionId: string;
+  consensusHistory: ConsensusRecord[];
+  agentCommunicationLog: CommunicationMessage[];
+}
+
+enum PartyPlanStatus {
+  INITIATED = "initiated", // Planning started
+  AGENTS_NEGOTIATING = "negotiating", // Agents discussing options
+  CONSENSUS_PENDING = "consensus_pending", // Voting in progress
+  FINALIZED = "finalized", // Plan approved by user
+  CANCELLED = "cancelled", // Planning abandoned
+}
+```
+
+**Validation Rules**:
+
+- `targetDate` must be in the future
+- `estimatedGuestCount` >= 1
+- `budget.total` >= 0 if specified
+- `status` transitions: `INITIATED` → `AGENTS_NEGOTIATING` → `CONSENSUS_PENDING` → `FINALIZED`
+
+---
+
+### 2. Agent
+
+Represents an AI agent participating in party planning.
+
+```typescript
+interface Agent {
+  id: string; // Agent instance ID (UUID)
+  type: AgentType;
+  personality: AgentPersonality;
+  status: AgentStatus;
+
+  // A2A Protocol metadata
+  agentCard: AgentCard; // From A2A spec
+  endpoint: string; // HTTP URL for A2A JSON-RPC
+
+  // Runtime state
+  currentTaskId?: string; // Active A2A task ID
+  lastHeartbeat: Date;
+}
+
+enum AgentType {
+  FOOD_PLANNER = "food_planner",
+  THEME_DECIDER = "theme_decider",
+  CONTACT_MANAGER = "contact_manager",
+  DECORATOR = "decorator",
+  PURCHASER = "purchaser",
+  DJ_PLAYLIST = "dj_playlist",
+}
+
+enum AgentStatus {
+  IDLE = "idle",
+  WORKING = "working",
+  WAITING_FEEDBACK = "waiting_feedback",
+  FAILED = "failed",
+}
+
+interface AgentPersonality {
+  style: string; // e.g., "enthusiastic", "minimalist"
+  priorityWeights: {
+    cost: number; // 0.0 - 1.0
+    quality: number;
+    convenience: number;
+    novelty: number;
+  };
+  verbalizedSamplingCount: number; // How many options to generate (2-5)
+  consensusBias: "majority" | "quality" | "cost";
+}
+
+// A2A AgentCard (simplified - full spec in A2A protocol)
+interface AgentCard {
+  protocolVersion: string; // "0.3.0"
+  name: string;
+  description: string;
+  url: string; // Agent's A2A endpoint
+  capabilities: {
+    streaming: boolean;
+    pushNotifications: boolean;
+  };
+  skills: AgentSkill[];
+}
+
+interface AgentSkill {
+  id: string;
+  name: string;
+  description: string;
+  tags: string[];
+  examples?: string[];
+}
+```
+
+**Validation Rules**:
+
+- `personality.priorityWeights` values must sum to 1.0
+- `verbalizedSamplingCount` must be between 2 and 5
+- `endpoint` must be valid HTTP(S) URL
+- `agentCard.protocolVersion` must match supported A2A version
+
+---
+
+### 3. CommunicationMessage (A2A Message)
+
+Represents a message exchanged between agents using A2A protocol.
+
+```typescript
+interface CommunicationMessage {
+  messageId: string; // UUID
+  role: "user" | "agent"; // From A2A spec
+  parts: MessagePart[]; // Content parts
+
+  // Routing
+  senderId: string; // Agent ID
+  recipientIds: string[]; // Target agent IDs
+
+  // Context
+  taskId?: string; // A2A task ID
+  contextId?: string; // A2A context ID (groups related messages)
+  timestamp: Date;
+
+  // Metadata
+  metadata?: Record<string, any>;
+  extensions?: string[]; // URIs of A2A extensions used
+}
+
+// From A2A protocol - discriminated union
+type MessagePart = TextPart | FilePart | DataPart;
+
+interface TextPart {
+  kind: "text";
+  text: string;
+  metadata?: Record<string, any>;
+}
+
+interface FilePart {
+  kind: "file";
+  file: {
+    name?: string;
+    mimeType?: string;
+    bytes?: string; // Base64 encoded
+    uri?: string; // Or external URL
+  };
+  metadata?: Record<string, any>;
+}
+
+interface DataPart {
+  kind: "data";
+  data: Record<string, any>; // Structured JSON data
+  metadata?: Record<string, any>;
+}
+```
+
+**Validation Rules**:
+
+- `parts` array must not be empty
+- `role` must be 'user' or 'agent'
+- `recipientIds` must contain at least one valid agent ID
+- If `FilePart`, either `bytes` OR `uri` must be present (not both)
+
+---
+
+### 4. VerbalizeSamplingOutput
+
+Represents multiple options generated by an agent during exploration phase.
+
+```typescript
+interface VerbalizeSamplingOutput {
+  id: string; // UUID
+  agentId: string; // Which agent generated this
+  taskContext: string; // What decision/choice this is for
+  generatedAt: Date;
+
+  options: SamplingOption[];
+  selectedOptionId?: string; // Set after feedback/voting
+
+  // Feedback from other agents
+  feedbackReceived: AgentFeedback[];
+}
+
+interface SamplingOption {
+  optionId: string; // UUID
+  proposal: any; // The actual option (type varies by agent)
+  rationale: string; // Why this option is good
+  confidenceScore: number; // 0.0 - 1.0
+  estimatedCost?: number;
+  metadata?: Record<string, any>;
+}
+
+interface AgentFeedback {
+  feedbackId: string;
+  fromAgentId: string;
+  targetOptionId: string;
+  score: number; // 1-5 rating
+  comments: string;
+  suggestedChanges?: any;
+  timestamp: Date;
+}
+```
+
+**Validation Rules**:
+
+- `options` must contain 2-5 items
+- Each `confidenceScore` between 0.0 and 1.0
+- `score` in feedback between 1 and 5
+- If `selectedOptionId` is set, must match one of `options[].optionId`
+
+---
+
+### 5. Guest
+
+Represents a party attendee.
+
+```typescript
+interface Guest {
+  id: string; // UUID
+  name: string;
+  email?: string;
+  phoneNumber?: string;
+  dietaryRestrictions: string[]; // e.g., ["vegetarian", "gluten-free"]
+  plusOne: boolean;
+  invitationStatus: InvitationStatus;
+
+  // Contact Manager metadata
+  addedBy: string; // Agent ID or "user"
+  addedAt: Date;
+  notes?: string;
+}
+
+enum InvitationStatus {
+  NOT_SENT = "not_sent",
+  SENT = "sent",
+  CONFIRMED = "confirmed",
+  DECLINED = "declined",
+  TENTATIVE = "tentative",
+}
+```
+
+**Validation Rules**:
+
+- `name` must not be empty
+- At least one of `email` or `phoneNumber` must be provided
+- `dietaryRestrictions` entries must be lowercase, no duplicates
+
+---
+
+### 6. PurchaseItem
+
+Represents an item to be purchased for the party.
+
+```typescript
+interface PurchaseItem {
+  id: string; // UUID
+  name: string;
+  category: PurchaseCategory;
+  quantity: number;
+  unitPrice?: number; // Estimated or actual
+  totalPrice?: number;
+  currency: string; // ISO 4217 code
+
+  // Sourcing
+  vendor?: string;
+  url?: string; // Product link
+  priority: "high" | "medium" | "low";
+
+  // Coordination
+  assignedToAgentId?: string; // Which agent is responsible
+  purchaseStatus: PurchaseStatus;
+  notes?: string;
+}
+
+enum PurchaseCategory {
+  FOOD = "food",
+  BEVERAGE = "beverage",
+  DECORATION = "decoration",
+  TABLEWARE = "tableware",
+  ENTERTAINMENT = "entertainment",
+  MISC = "misc",
+}
+
+enum PurchaseStatus {
+  PLANNED = "planned",
+  APPROVED = "approved",
+  PURCHASED = "purchased",
+  DELIVERED = "delivered",
+  CANCELLED = "cancelled",
+}
+```
+
+**Validation Rules**:
+
+- `quantity` must be positive
+- If `unitPrice` is set, `totalPrice` should equal `quantity * unitPrice`
+- `currency` must be valid ISO 4217 code (e.g., "USD", "EUR")
+
+---
+
+### 7. Theme
+
+Represents the party theme decided by Theme Decider agent.
+
+```typescript
+interface Theme {
+  id: string; // UUID
+  name: string; // e.g., "Spooky Halloween"
+  description: string;
+  colorScheme: string[]; // Hex color codes
+  style: string; // e.g., "gothic", "playful", "elegant"
+
+  // Inspirations
+  inspirationSources: string[]; // URLs, images, references
+  keywords: string[]; // Searchable terms
+
+  // Agent metadata
+  proposedBy: string; // Agent ID
+  approvedAt?: Date;
+  consensusVoteId?: string; // Reference to vote that approved this
+}
+```
+
+**Validation Rules**:
+
+- `name` must not be empty
+- `colorScheme` must contain at least 1 color, max 5
+- Each color must be valid hex code (e.g., "#FF5733")
+
+---
+
+### 8. MenuItem
+
+Represents a food or beverage item on the party menu.
+
+```typescript
+interface MenuItem {
+  id: string; // UUID
+  name: string;
+  description?: string;
+  category: MenuCategory;
+  servingSize: string; // e.g., "per person", "shared platter"
+  estimatedQuantity: number; // Based on guest count
+
+  // Dietary info
+  dietaryLabels: string[]; // e.g., ["vegan", "nut-free"]
+  allergens: string[]; // e.g., ["peanuts", "dairy"]
+
+  // Sourcing
+  recipe?: string; // Or URL to recipe
+  estimatedCost?: number;
+  prepTime?: string; // ISO 8601 duration (e.g., "PT30M")
+
+  // Agent metadata
+  proposedBy: string; // Agent ID
+}
+
+enum MenuCategory {
+  APPETIZER = "appetizer",
+  MAIN_COURSE = "main_course",
+  DESSERT = "dessert",
+  BEVERAGE = "beverage",
+  SNACK = "snack",
+}
+```
+
+**Validation Rules**:
+
+- `estimatedQuantity` must be positive
+- `dietaryLabels` and `allergens` must be lowercase, no duplicates
+- If `prepTime` is provided, must be valid ISO 8601 duration
+
+---
+
+### 9. DecorationItem
+
+Represents a decoration element planned by Decorator agent.
+
+```typescript
+interface DecorationItem {
+  id: string; // UUID
+  name: string;
+  description?: string;
+  category: DecorationCategory;
+  quantity: number;
+  placement: string; // e.g., "entryway", "dining table", "ceiling"
+
+  // Sourcing
+  purchaseUrl?: string;
+  estimatedCost?: number;
+  isDIY: boolean; // Can be made at home
+
+  // Theme alignment
+  themeId: string; // Must match selected theme
+  colorTags: string[]; // Hex colors from theme
+
+  // Agent metadata
+  proposedBy: string; // Agent ID
+  priority: "essential" | "recommended" | "optional";
+}
+
+enum DecorationCategory {
+  WALL_DECOR = "wall_decor",
+  TABLE_CENTERPIECE = "table_centerpiece",
+  LIGHTING = "lighting",
+  PROP = "prop",
+  SIGNAGE = "signage",
+  FLORAL = "floral",
+  MISC = "misc",
+}
+```
+
+**Validation Rules**:
+
+- `quantity` must be positive
+- `themeId` must reference an existing theme
+- `colorTags` should contain valid hex codes matching theme colors
+
+---
+
+### 10. Playlist
+
+Represents the music playlist curated by DJ/Playlist agent.
+
+```typescript
+interface Playlist {
+  id: string; // UUID
+  name: string;
+  description?: string;
+  themeId: string; // Must align with party theme
+  totalDuration: string; // ISO 8601 duration (e.g., "PT3H30M")
+
+  songs: Song[];
+
+  // Metadata
+  genres: string[]; // e.g., ["rock", "pop", "electronic"]
+  mood: string; // e.g., "energetic", "chill", "spooky"
+
+  // Agent metadata
+  proposedBy: string; // Agent ID (dj_playlist)
+  generatedAt: Date;
+  externalPlaylistUrl?: string; // Spotify, YouTube, etc.
+}
+```
+
+**Validation Rules**:
+
+- `songs` must contain at least 5 songs
+- `totalDuration` must match sum of all song durations
+- `genres` must not be empty
+
+---
+
+### 11. Song
+
+Represents a single song in the playlist.
+
+```typescript
+interface Song {
+  id: string; // UUID
+  title: string;
+  artist: string;
+  album?: string;
+  duration: string; // ISO 8601 duration (e.g., "PT4M32S")
+  genre: string;
+  releaseYear?: number;
+
+  // Sourcing
+  spotifyId?: string;
+  youtubeId?: string;
+  url?: string; // External music service link
+
+  // Playlist context
+  playlistPosition: number; // Order in playlist (0-indexed)
+  transitionNote?: string; // How this flows into next song
+}
+```
+
+**Validation Rules**:
+
+- `title` and `artist` must not be empty
+- `duration` must be valid ISO 8601 duration
+- `releaseYear` must be between 1900 and current year + 1
+- At least one of `spotifyId`, `youtubeId`, or `url` should be provided
+
+---
+
+## Supporting Types
+
+### ConsensusRecord
+
+Tracks voting history for decisions.
+
+```typescript
+interface ConsensusRecord {
+  voteId: string; // UUID
+  topic: string; // What was being decided
+  proposalId: string; // Reference to option/theme/menu/etc.
+  votingAgents: string[]; // Agent IDs that participated
+  votes: Vote[];
+  outcome: VoteOutcome;
+  timestamp: Date;
+  durationMs: number; // How long voting took
+}
+
+interface Vote {
+  agentId: string;
+  decision: "approve" | "reject" | "abstain";
+  rationale: string;
+  weight: number; // Usually 1.0 (equal votes)
+  castAt: Date;
+}
+
+enum VoteOutcome {
+  APPROVED = "approved", // >50% approval
+  REJECTED = "rejected", // ≤50% approval
+  TIE = "tie", // Rare - requires tiebreaker
+  TIMEOUT = "timeout", // Not enough votes in time
+}
+```
+
+---
+
+## Entity Relationships
+
+```text
+PartyPlan (1) ──┬── (1) Theme
+                ├── (0..n) Guest
+                ├── (0..n) MenuItem
+                ├── (0..n) DecorationItem
+                ├── (0..n) PurchaseItem
+                ├── (0..1) Playlist
+                └── (0..n) CommunicationMessage
+
+Playlist (1) ────── (1..n) Song
+
+Theme (1) ────── (0..n) DecorationItem (via themeId)
+
+Agent (1) ────── (0..n) CommunicationMessage (as sender)
+Agent (1) ────── (0..n) VerbalizeSamplingOutput
+
+VerbalizeSamplingOutput (1) ────── (2..5) SamplingOption
+VerbalizeSamplingOutput (1) ────── (0..n) AgentFeedback
+
+ConsensusRecord (1) ────── (1..n) Vote
+```
+
+---
+
+## Validation Summary
+
+| Entity                  | Required Fields                       | Constraints                             |
+| ----------------------- | ------------------------------------- | --------------------------------------- |
+| PartyPlan               | id, hostUserId, targetDate, status    | targetDate in future, status valid enum |
+| Agent                   | id, type, personality, agentCard      | personality weights sum to 1.0          |
+| Theme                   | id, name, colorScheme                 | 1-5 colors, valid hex codes             |
+| Guest                   | id, name, email OR phoneNumber        | At least one contact method             |
+| MenuItem                | id, name, category, estimatedQuantity | Quantity > 0                            |
+| DecorationItem          | id, name, quantity, themeId           | Quantity > 0, themeId exists            |
+| PurchaseItem            | id, name, category, quantity          | Quantity > 0                            |
+| Playlist                | id, name, themeId, songs              | ≥5 songs, themeId exists                |
+| Song                    | id, title, artist, duration           | Valid ISO 8601 duration                 |
+| VerbalizeSamplingOutput | id, agentId, options                  | 2-5 options                             |
+| CommunicationMessage    | messageId, role, parts, senderId      | parts not empty                         |
+
+---
+
+## TypeScript Implementation Notes
+
+### Zod Schemas
+
+All interfaces should have corresponding Zod schemas for runtime validation:
+
+```typescript
+import { z } from "zod";
+
+const PartyPlanSchema = z.object({
+  id: z.string().uuid(),
+  hostUserId: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  status: z.nativeEnum(PartyPlanStatus),
+  targetDate: z.date().refine((date) => date > new Date(), {
+    message: "Target date must be in the future",
+  }),
+  // ... rest of fields
+});
+
+type PartyPlan = z.infer<typeof PartyPlanSchema>;
+```
+
+### Serialization
+
+When saving to JSON files:
+
+- Convert `Date` objects to ISO 8601 strings
+- Validate before save using Zod schemas
+- Use pretty-printing with 2-space indent for readability
+
+---
+
+## Next Steps
+
+1. Implement TypeScript interfaces in `src/models/`
+2. Create Zod schemas for validation in parallel
+3. Generate TypeScript types from A2A protocol spec for `CommunicationMessage` parts
+4. Define contracts (A2A message formats) in next phase
+
+---
+
+**Date**: 2025-01-16
+**Status**: ✅ Data Model Complete - Ready for Contracts Phase

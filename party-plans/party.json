@@ -1,0 +1,225 @@
+{
+  "constraints": {
+    "budget": 1000,
+    "guestCount": 75,
+    "date": "2025-10-31",
+    "personality": "perfectionist"
+  },
+  "theme": {
+    "name": "Classic Spooky Halloween",
+    "description": "Traditional Halloween atmosphere with pumpkins, ghosts, and witches",
+    "confidence": 0.9,
+    "colors": [
+      "orange",
+      "black",
+      "purple"
+    ],
+    "mood": [
+      "spooky",
+      "fun",
+      "traditional"
+    ]
+  },
+  "menu": [
+    {
+      "name": "Artisan Pumpkin Bisque with Crispy Sage & Charred Ghost Garnish",
+      "description": "Hand-crafted roasted pumpkin bisque infused with nutmeg and thyme, finished with crème fraîche swirl and delicate ghost-shaped crouton cutouts. Served in premium ceramic demitasse cups with artisan sage oil drizzle.",
+      "costPerServing": 4.25,
+      "totalCost": 318.75,
+      "servings": 75,
+      "prepMethod": "Prepared fresh or purchased from premium local caterer",
+      "dietaryTags": [
+        "vegetarian",
+        "gluten-free option available"
+      ],
+      "themeAlignment": "Traditional pumpkin imagery with sophisticated plating"
+    },
+    {
+      "name": "Smoked Gouda & Caramelized Onion Witch Hat Tartlets",
+      "description": "Hand-formed phyllo tartlets shaped like witch hats, filled with aged smoked Gouda, slow-caramelized pearl onions, and fresh thyme. Topped with crispy sage leaf and edible gold dust for premium presentation.",
+      "costPerServing": 5.75,
+      "totalCost": 431.25,
+      "servings": 75,
+      "prepMethod": "Artisan preparation or premium catering service",
+      "dietaryTags": [
+        "vegetarian",
+        "contains gluten"
+      ],
+      "themeAlignment": "Witch hat silhouette with elegant flavor profile"
+    },
+    {
+      "name": "Charcoal-Activated Squid Ink Pasta with Ghost-Shaped Mozzarella",
+      "description": "Premium artisanal squid ink fettuccine tossed with garlic-infused olive oil, finished with hand-molded ghost-shaped burrata pearls, microgreens, and aged balsamic reduction.",
+      "costPerServing": 6.5,
+      "totalCost": 487.5,
+      "servings": 75,
+      "prepMethod": "Prepared fresh or premium catering",
+      "dietaryTags": [
+        "vegetarian",
+        "contains shellfish"
+      ],
+      "themeAlignment": "Dark spooky aesthetic with sophisticated Italian execution"
+    },
+    {
+      "name": "Bone Marrow Roasted Root Vegetable Skewers with Herb Oil",
+      "description": "Artisan-sourced bone marrow with roasted heirloom carrots, parsnips, and beets arranged on premium bamboo skewers. Finished with house-made herb oil and fleur de sel. Presented on dark slate platters.",
+      "costPerServing": 5.5,
+      "totalCost": 412.5,
+      "servings": 75,
+      "prepMethod": "Fresh preparation or premium catering",
+      "dietaryTags": [
+        "gluten-free",
+        "paleo-friendly"
+      ],
+      "themeAlignment": "Spooky bone motif with elegant rustic presentation"
+    },
+    {
+      "name": "Dark Chocolate & Pomegranate Haunted Mousse Cups with Edible Insects",
+      "description": "Premium 72% dark chocolate mousse layered with pomegranate reduction, served in hand-crafted dark ceramic cups. Garnished with edible gold, pomegranate arils, and artisan-quality edible insects for theatrical effect.",
+      "costPerServing": 4.85,
+      "totalCost": 363.75,
+      "servings": 75,
+      "prepMethod": "Artisan pastry preparation or premium dessert catering",
+      "dietaryTags": [
+        "vegetarian",
+        "gluten-free"
+      ],
+      "themeAlignment": "Dark, mysterious aesthetic with premium presentation"
+    },
+    {
+      "name": "Spiced Apple Cider Reduction with Cinnamon Stick Wand Stirrers",
+      "description": "Artisan-crafted mulled apple cider infused with star anise, cloves, and cardamom. Served in premium glassware with hand-tied cinnamon stick wands and dried apple slice garnishes for witchy atmosphere.",
+      "costPerServing": 2.8,
+      "totalCost": 210,
+      "servings": 75,
+      "prepMethod": "Fresh preparation or premium beverage service",
+      "dietaryTags": [
+        "vegetarian",
+        "vegan",
+        "gluten-free"
+      ],
+      "themeAlignment": "Witch's potion aesthetic with warm spiced flavors"
+    }
+  ],
+  "decorations": [
+    {
+      "name": "Halloween String Lights",
+      "description": "Orange and purple LED string lights",
+      "estimatedCost": 25,
+      "confidence": 0.9,
+      "quantity": 3
+    },
+    {
+      "name": "Pumpkin Centerpieces",
+      "description": "Carved pumpkins for table centerpieces",
+      "estimatedCost": 30,
+      "confidence": 0.85,
+      "quantity": 5
+    }
+  ],
+  "playlist": {
+    "name": "Classic Halloween Hits",
+    "description": "Mix of Halloween classics and spooky atmosphere tracks",
+    "songs": [
+      "Monster Mash - Bobby Pickett",
+      "Thriller - Michael Jackson",
+      "Ghostbusters - Ray Parker Jr.",
+      "Somebody's Watching Me - Rockwell",
+      "Time Warp - Rocky Horror"
+    ],
+    "confidence": 0.85,
+    "durationMinutes": 120
+  },
+  "contact": {
+    "invitationTemplate": "🎃 You're Invited to a Spooktacular Halloween Party! 🎃\n\nDate: 2025-10-31\nGuests: 75 friends\nTheme: [To be announced after theme selection]\n\nJoin us for an unforgettable Halloween celebration filled with:\n✨ Delicious themed food and drinks\n🎨 Spooky decorations\n🎵 Curated Halloween music\n👻 Great company and Halloween spirit\n\nPlease RSVP by [DATE] so we can plan accordingly.\n\n\nCan't wait to celebrate with you!",
+    "rsvpMethod": "online-form",
+    "sendTimelineDays": 14,
+    "reminderSchedule": [
+      7,
+      3,
+      1
+    ]
+  },
+  "purchaseList": [
+    {
+      "name": "Artisan Pumpkin Bisque with Crispy Sage & Charred Ghost Garnish",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 4.25,
+      "source": "grocery store"
+    },
+    {
+      "name": "Smoked Gouda & Caramelized Onion Witch Hat Tartlets",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 5.75,
+      "source": "grocery store"
+    },
+    {
+      "name": "Charcoal-Activated Squid Ink Pasta with Ghost-Shaped Mozzarella",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 6.5,
+      "source": "grocery store"
+    },
+    {
+      "name": "Bone Marrow Roasted Root Vegetable Skewers with Herb Oil",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 5.5,
+      "source": "grocery store"
+    },
+    {
+      "name": "Dark Chocolate & Pomegranate Haunted Mousse Cups with Edible Insects",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 4.85,
+      "source": "grocery store"
+    },
+    {
+      "name": "Spiced Apple Cider Reduction with Cinnamon Stick Wand Stirrers",
+      "category": "food",
+      "quantity": 75,
+      "unit": "servings",
+      "estimatedPrice": 2.8,
+      "source": "grocery store"
+    },
+    {
+      "name": "Halloween String Lights",
+      "category": "decoration",
+      "quantity": 3,
+      "unit": "each",
+      "estimatedPrice": 25,
+      "source": "party supply store"
+    },
+    {
+      "name": "Pumpkin Centerpieces",
+      "category": "decoration",
+      "quantity": 5,
+      "unit": "each",
+      "estimatedPrice": 30,
+      "source": "party supply store"
+    }
+  ],
+  "budget": {
+    "totalBudget": 1000,
+    "food": 2223.75,
+    "decorations": 55,
+    "entertainment": 0,
+    "supplies": 150,
+    "estimatedTotal": 2428.75,
+    "remaining": -1428.75,
+    "withinBudget": false
+  },
+  "metadata": {
+    "createdAt": "2025-10-31T13:35:20.785Z",
+    "planningDurationMs": 27803,
+    "messageCount": 7,
+    "consensusAchieved": true
+  }
+}
